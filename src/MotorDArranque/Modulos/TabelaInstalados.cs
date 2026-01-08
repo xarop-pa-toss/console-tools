@@ -1,3 +1,4 @@
+using MotorDArranque.WingetOps;
 using Spectre.Console;
 
 namespace console_tools.Modulos;
@@ -17,7 +18,7 @@ public partial class Modulos
         tabelaInstalados.AddColumn("Instalado", col => col.RightAligned());
         tabelaInstalados.AddColumn("Disponivel", col => col.RightAligned());
         tabelaInstalados.AddColumn("Origem", col => col.Centered());
-        
+       
         var listaProgramas = await WingetOps.GetProgramasInstaladosAsync();
         if (listaProgramas.Count == 0)
         {
