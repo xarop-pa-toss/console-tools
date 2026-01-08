@@ -18,6 +18,7 @@ AnsiConsole.Write(Align.Center(panelTitulo));
 
 var Modulos = new Modulos();
 
+
 AnsiConsole.MarkupLine(Mensagens.Erro("um erro daqueles /n muito feios"));
 AnsiConsole.MarkupLine(Mensagens.Aviso("um aviso daqueles /n muito feios"));
 
