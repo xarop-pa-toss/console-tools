@@ -4,6 +4,11 @@ using console_tools.Utils;
 using MotorDArranque;
 using Spectre.Console;
 
+// STARTUP
+var Modulos = new Modulos();
+
+Directory.CreateDirectory(AppPaths.UserTemp);
+
 Utils.WriteGradient(Assets.InfoLogo, Color.Purple, Color.Aqua);
 
 var panelTitulo = new Panel(
@@ -15,26 +20,20 @@ var panelTitulo = new Panel(
     .RoundedBorder();
 AnsiConsole.Write(Align.Center(panelTitulo));
 
-
-var Modulos = new Modulos();
-
-
-AnsiConsole.MarkupLine(Mensagens.Erro("um erro daqueles /n muito feios"));
-AnsiConsole.MarkupLine(Mensagens.Aviso("um aviso daqueles /n muito feios"));
-
-
-var checkPackages = AnsiConsole.Prompt(
-    new ConfirmationPrompt("Quer analisar os programas instalados e procurar actualizações?")
-    {
-        DefaultValue = false,
-        ChoicesStyle = Styles.Base.Foreground,
-        DefaultValueStyle = Styles.Base.Background
+await Modulos.UpdateMotor();
+    
+//    AnsiConsole.Prompt(
+//    new ConfirmationPrompt("Quer analisar os programas instalados e procurar actualizações?")
+//    {
+//        DefaultValue = false,
+//        ChoicesStyle = Styles.Base.Foreground,
+//        DefaultValueStyle = Styles.Base.Background
         
-    }
-    .Yes('s')
-    .No('n')
-    .InvalidChoiceMessage("Ou (s)im ou (n)ão jovem...")
-);
+//    }
+//    .Yes('s')
+//    .No('n')
+//    .InvalidChoiceMessage("Ou (s)im ou (n)ão jovem...")
+//);
 
 var mainMenu = AnsiConsole.Prompt(
     new SelectionPrompt<string>()
