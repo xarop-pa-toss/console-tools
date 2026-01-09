@@ -19,7 +19,7 @@ public partial class Modulos
         tabelaInstalados.AddColumn("Disponivel", col => col.RightAligned());
         tabelaInstalados.AddColumn("Origem", col => col.Centered());
        
-        var listaProgramas = await WingetBase.ListarProgramasAsync();
+        var listaProgramas = await WingetBase.GetListaProgramasAsync();
         if (listaProgramas.Count == 0)
         {
             AnsiConsole.Markup("[yellow]Não existem programas instalados através do Winget.[/]");
@@ -28,8 +28,8 @@ public partial class Modulos
 
         foreach (var prg in listaProgramas)
         {
-            var installed = prg.Installed ?? "---";
-            var available = prg.Available ?? "---";
+            var installed = prg.InstalledVersion ?? "---";
+            var available = prg.AvailableVersion ?? "---";
             var markupAvailable = installed != available && available != "---"
                 ? $"[yellow]{available}[/]"
                 : installed;
