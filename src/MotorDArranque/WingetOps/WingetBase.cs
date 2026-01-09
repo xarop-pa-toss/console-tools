@@ -9,9 +9,9 @@ using System.Text.Json;
 
 namespace MotorDArranque.WingetOps
 {
-    internal static class WingetInfo
+    internal static class WingetBase
     {
-        public static async Task<List<ProgramInfo>> GetProgramasInstaladosAsync(string jsonExportPath)
+        public static async Task<List<ProgramInfo>> GetListaProgramasInstalados()
         {
             string jsonFullPath = Path.Combine(AppPaths.UserTemp, "winget_instalados.json");
 
@@ -39,33 +39,60 @@ namespace MotorDArranque.WingetOps
 
                         if (process.ExitCode != 0)
                             throw new Exception($"Processo falhou com código {process.ExitCode}");
-                        ;
 
                         Thread.Sleep(500);
                         AnsiConsole.Markup("[violet]:check_mark:A encontrar programas instalados.[/]");
                     });
 
-            var programsList = new List<ProgramInfo>();
+            var programasLista = new List<ProgramInfo>();
             await AnsiConsole.Status()
                     .Spinner(Spinner.Known.Sand)
                     .SpinnerStyle(Style.Parse("bold turquoise2"))
                     .StartAsync("A compilar informação...", async ctx =>
                     {
                         var json = await File.ReadAllTextAsync(jsonFullPath);
-                        var programsList = JsonSerializer.Deserialize<List<ProgramInfo>>(json);
+                        programasLista = JsonSerializer.Deserialize<List<ProgramInfo>>(json);
 
-                        if (programsList == null || programsList.Count == 0)
+                        if (programasLista == null || programasLista.Count == 0)
                         {
-                            Mensagens.Aviso("Não foram encontrados resultados!");
+                            Mensagens.Aviso("Não foram encontrados programas instalados com o Winget!");
                         }
 
-                        programsList
-                    .OrderByDescending(x => x.Source)
-                    .ThenBy(x => x.Id);
 
-                        AnsiConsole.Markup("[violet]:check_mark:Terminado![/]");
+                    programasLista
+                    .OrderByDescending(x => x.Source)
+                    .ThenBy(x => x.Name);
+
+                    AnsiConsole.Markup("[violet]:check_mark:Terminado![/]");
                     });
-            return programsList;
+
+                
+            return programasLista;
         }        
+
+        public static async Task ExportarListaAsync(string jsonImportPath)
+        {
+
+        }
+
+        public static async Task ImportarListaAsync(string jsonImportPath)
+        {
+
+        }
+
+        private string GetVersoesDisponiveis(string programId)
+        {
+            var prinfo = new ProcessStartInfo
+            {
+                FileName = "winget",
+                Arguments = $"upgrade --include-unknown",
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            using var process = Process.Start(prinfo)
+                ?? throw new InvalidOperationException("Erro ao iniciar processo Winget.");
+
+        }
     }
 }

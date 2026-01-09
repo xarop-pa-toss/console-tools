@@ -6,16 +6,15 @@ using System.Text.Json;
 
 namespace MotorDArranque.WingetOps
 { 
-    internal class GetProgramasInstalados
+    internal class ListaProgramas
     {
         public List<ProgramInfo> Programs { get; private set; } = new();
 
-        private GetProgramasInstalados(string wingetExportJsonPath) 
+        private ListaProgramas(string wingetExportJsonPath)
         {
-            return ListaProgramas(wingetExportJsonPath);
-        }
 
-        public static async Task<List<ProgramInfo>> ListaProgramas(string wingetExportJsonPath)
+        }
+        public static async Task<List<ProgramInfo>> GetListaProgramas(string wingetExportJsonPath)
         {
             var json = File.ReadAllText(wingetExportJsonPath);
 

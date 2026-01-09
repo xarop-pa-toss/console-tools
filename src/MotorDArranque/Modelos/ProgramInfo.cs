@@ -5,6 +5,7 @@ using System.Text;
 namespace MotorDArranque.Modelos
 {
     public record ProgramInfo(
+        string Name,
         string Id,
         string InstalledVersion,
         string AvailableVersion,

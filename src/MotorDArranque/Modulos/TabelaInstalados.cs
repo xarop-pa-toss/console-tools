@@ -19,7 +19,7 @@ public partial class Modulos
         tabelaInstalados.AddColumn("Disponivel", col => col.RightAligned());
         tabelaInstalados.AddColumn("Origem", col => col.Centered());
        
-        var listaProgramas = await WingetOps.GetProgramasInstaladosAsync();
+        var listaProgramas = await WingetBase.ListarProgramasAsync();
         if (listaProgramas.Count == 0)
         {
             AnsiConsole.Markup("[yellow]Não existem programas instalados através do Winget.[/]");

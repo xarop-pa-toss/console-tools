@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="MotorDArranque-Test/MotorDArranque-Test.csproj" Id="a5e4b2a8-aa86-4cdf-a7f9-70de8f2553c2" />
     <Project Path="src/MotorDArranque/MotorDArranque.csproj" />
   </Folder>
 </Solution>
