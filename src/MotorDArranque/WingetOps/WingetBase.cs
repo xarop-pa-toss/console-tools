@@ -12,38 +12,35 @@ namespace MotorDArranque.WingetOps
 {
     internal static class WingetBase
     {
-        static string jsonFullPath = Path.Combine(AppPaths.UserTemp, "winget_instalados.json");
+        static string jsonFullPath = Path.Combine(AppPaths.AppDirInUserTemp, "winget_instalados.json");
 
-        public static async Task<List<ProgramInfo>> GetListaProgramasAsync()
+        public async static Task<List<ProgramInfo>> GetListaProgramasAsync()
         {
-            //var listaProgramasInstalados = GetProgramasInstaladosAsync();
-            //var listaVersoesDisponiveis = GetListaProgramasWingetCompletaAsync();
-            //await Task.WhenAll(listaProgramasInstalados, listaVersoesDisponiveis);
-            //List<ProgramInfo> listaCompilada = CompilarListaProgramas(
-            //    listaProgramasInstalados.Result,
-            //    listaVersoesDisponiveis.Result
-            //);
-            List<ProgramInfo> listaProgramas = new List<ProgramInfo>();
-
-            await AnsiConsole.Status()
-                .Spinner(Spinner.Known.Sand)
-                .SpinnerStyle(Style.Parse("bold turquoise2"))
-                .StartAsync("A compilar informação...", async ctx =>
-                {
-                    var listaResult = await GetListaProgramasWingetCompletaAsync();
-
-                    listaProgramas = listaResult
-                        .OrderByDescending(x => x.Source)
-                        .ThenBy(x => x.Name)
-                        .ToList();
-
-                    AnsiConsole.Markup("[violet]:check_mark:Terminado![/]");
-                });
+            // List<ProgramInfo> listaCompilada = CompilarListaProgramas(
+            //     listaProgramasInstalados.Result,
+            //     listaVersoesDisponiveis.Result
+            // );
+            var listaProgramas = await GetProgramasInstaladosAsync();
+            listaProgramas = await GetVersoesDisponiveisAsync(listaProgramas);
+            
+            // await AnsiConsole.Status()
+            //     .Spinner(Spinner.Known.Sand)
+            //     .SpinnerStyle(Style.Parse("bold turquoise2"))
+            //     .StartAsync("A compilar informação...", async ctx =>
+            //     {
+            //         var listaResult = await GetListaProgramasWingetCompletaAsync();
+            //
+            //         listaProgramas = listaResult
+            //             .OrderByDescending(x => x.Name)
+            //             .ToList();
+            //
+            //         AnsiConsole.Markup("[violet]:check_mark:Terminado![/]");
+            //     });
 
             return listaProgramas;
         }        
 
-        private static async Task<List<ProgramInfo>> GetProgramasInstaladosAsync()
+        private async static Task<List<ProgramInfo>> GetProgramasInstaladosAsync()
         {
             await AnsiConsole.Status()
                 .Spinner(Spinner.Known.Sand)
@@ -59,10 +56,57 @@ namespace MotorDArranque.WingetOps
                     AnsiConsole.Markup("[violet]:check_mark:A encontrar programas instalados.[/]");
                 });
 
-            return await Utils.ParseExportJsonParaListaProgramas(jsonFullPath);
+            return Utils.ParseExportJsonParaListaProgramas(jsonFullPath);
         }
 
-        private static async Task<List<ProgramInfo>> GetListaProgramasWingetCompletaAsync()
+        private async static Task<List<ProgramInfo>> GetVersoesDisponiveisAsync(List<ProgramInfo> listaProgramas)
+        {
+            await AnsiConsole.Status()
+                .Spinner(Spinner.Known.Sand)
+                .SpinnerStyle(Style.Parse("bold turquoise2"))
+                .StartAsync("A procurar actualizações...", async ctx =>
+                {
+                    foreach (ProgramInfo prginfo in listaProgramas)
+                    {
+                        var resultadoProcesso = await Utils.CorrerProcessoAsync(
+                            "winget",
+                            $"show --id {prginfo.Id}",
+                            true
+                        );
+                
+                        string stdout = resultadoProcesso.StdOut;
+                        // As primeiras duas linhas do winget show têm o formato:
+                        // Found SumatraPDF [SumatraPDF.SumatraPDF]
+                        // Version: 3.5.2
+                        string? nome = null;
+                        string? versao = null;
+
+                        foreach (var linha in stdout.Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            var l = linha.Trim();
+
+                            if (nome == null && l.StartsWith("\rFound "))
+                                prginfo.Name = l
+                                    .Substring(6, l.IndexOf('[') - 6)
+                                    .Trim();
+                            else if (versao == null && l.StartsWith("Version:"))
+                                prginfo.AvailableVersion = l
+                                    .Replace("Version:", "")
+                                    .Trim();
+
+                            if (nome!= null && versao != null)
+                                break;
+                        }
+                    }
+
+                    Thread.Sleep(200);
+                    AnsiConsole.Markup("[violet]:check_mark:A procurar actualizações.[/]");
+                });
+            return listaProgramas;
+        }
+
+        [Obsolete]
+        private async static Task<List<ProgramInfo>> GetListaProgramasWingetCompletaAsync()
         {
             var resultadoProcesso = await Utils.CorrerProcessoAsync(
                 "winget",
@@ -130,20 +174,16 @@ namespace MotorDArranque.WingetOps
                 // 4. Remaining is Name
                 string name = remaining;
 
-                listaProgramas.Add(new ProgramInfo(
-                    Name: name,
-                    Id: id,
-                    InstalledVersion: installed,
-                    AvailableVersion: available,
-                    Source: "winget"
-                ));
+                listaProgramas.Add(new ProgramInfo(name, id, installed, available, "winget"));
             }
             #endregion
             return listaProgramas;
         }
 
-        public static async Task ExportarListaAsync(string jsonExportPath)
+        public async static Task ExportarListaAsync(string jsonExportPath)
         {
+            //
+            //TODO: Exportar Pacote para formato JSON "winget export"
             //await AnsiConsole.Status()
             //    .Spinner(Spinner.Known.Sand)
             //    .SpinnerStyle(Style.Parse("bold turquoise2"))
@@ -159,9 +199,9 @@ namespace MotorDArranque.WingetOps
             //    });
         }
 
-        public static async Task ImportarListaAsync(string jsonImportPath)
+        public async static Task ImportarListaAsync(string jsonImportPath)
         {
-
+            //TODO: Criar novo Pacote a partir de um JSON "winget export"
         }
     }
 }

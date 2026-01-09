@@ -5,9 +5,9 @@ using MotorDArranque;
 using Spectre.Console;
 
 // STARTUP
-var Modulos = new Modulos();
+Modulos Modulos = new Modulos();
 
-Directory.CreateDirectory(AppPaths.UserTemp);
+Directory.CreateDirectory(AppPaths.AppDirInUserTemp);
 
 Utils.WriteGradient(Assets.InfoLogo, Color.Purple, Color.Aqua);
 
@@ -19,8 +19,6 @@ var panelTitulo = new Panel(
     .HeaderAlignment(Justify.Center)
     .RoundedBorder();
 AnsiConsole.Write(Align.Center(panelTitulo));
-
-await Modulos.UpdateMotor();
     
 //    AnsiConsole.Prompt(
 //    new ConfirmationPrompt("Quer analisar os programas instalados e procurar actualizações?")

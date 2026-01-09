@@ -6,19 +6,6 @@ using System.Text.Json;
 namespace MotorDArranque;
 public static class Utils
 {
-    private static string _erro { get; } = "[red]:cross_mark: Erro: ";
-    private static string _aviso { get; } = "[yellow]:warning: Aviso: ";
-
-    public static string Erro(string mensagem)
-    {
-        return _erro + mensagem + "[/]";
-    }
-    public static string Aviso(string mensagem)
-    {
-        return _aviso + mensagem + "[/]";
-    }
-
-
     public static void WriteGradient(string text, Color start, Color end)
     {
         for (int i = 0; i < text.Length; i++)
@@ -41,7 +28,7 @@ public static class Utils
         public string StdErr { get; set; } = string.Empty;
     }
 
-    public static async Task<ProcessoResultado> CorrerProcessoAsync(
+    public async static Task<ProcessoResultado> CorrerProcessoAsync(
         string nomeFicheiro, string argumentos, bool capturarOutput = false)
     {
         var psi = new ProcessStartInfo
@@ -79,7 +66,7 @@ public static class Utils
         };
     }
 
-    public static async Task<List<ProgramInfo>> ParseExportJsonParaListaProgramas(string wingetExportJsonPath)
+    public static List<ProgramInfo> ParseExportJsonParaListaProgramas(string wingetExportJsonPath)
     {
         var json = File.ReadAllText(wingetExportJsonPath);
         var options = new JsonSerializerOptions
@@ -94,11 +81,11 @@ public static class Utils
                 .SelectMany(source =>
                     source.Packages.Select(pkg =>
                         new ProgramInfo(
-                            Name: "", // Não presente neste JSON
-                            Id: pkg.PackageIdentifier,
-                            InstalledVersion: pkg.Version,
-                            AvailableVersion: "", //Não presente neste JSON
-                            Source: source.SourceDetails.Name
+                            "", // Não presente neste JSON
+                            pkg.PackageIdentifier,
+                            pkg.Version,
+                            "", //Não presente neste JSON
+                            source.SourceDetails.Name
                         )))
                 .OrderByDescending(x => x.Source)
                 .ThenBy(x => x.Id)
