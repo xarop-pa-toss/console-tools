@@ -39,7 +39,11 @@ namespace MotorDArranque.WingetOps
                     Thread.Sleep(200);
                     AnsiConsole.Markup("[violet]:check_mark:A procurar actualizações.[/]");
                 });
-            return listaProgramas;
+            
+            return listaProgramas
+                .OrderByDescending(x => x.InstalledVersion != x.AvailableVersion)
+                .ThenBy(x => x.Name)
+                .ToList();
         }
 
         private async static Task<List<ProgramInfo>> GetProgramasInstaladosAsync()

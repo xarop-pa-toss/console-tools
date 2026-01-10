@@ -8,8 +8,8 @@ using Spectre.Console;
 Modulos Modulos = new Modulos();
 if (OperatingSystem.IsWindows())
 {
-    Console.SetWindowSize(120, 30);
-    Console.SetBufferSize(120,100);
+    Console.SetWindowSize(200, 50);
+    Console.SetBufferSize(200,100);
 }
 
 Directory.CreateDirectory(AppPaths.AppDirInUserTemp);
@@ -23,7 +23,7 @@ var panelTitulo = new Panel(
     ).BorderColor(Color.Purple)
     .HeaderAlignment(Justify.Center)
     .RoundedBorder();
-AnsiConsole.Write(Align.Center(panelTitulo));
+AnsiConsole.Write(Align.Left(panelTitulo));
     
 //    AnsiConsole.Prompt(
 //    new ConfirmationPrompt("Quer analisar os programas instalados e procurar actualizações?")
@@ -38,9 +38,9 @@ AnsiConsole.Write(Align.Center(panelTitulo));
 //    .InvalidChoiceMessage("Ou (s)im ou (n)ão jovem...")
 //);
 
+AnsiConsole.MarkupLine("[Bold Underline Turquoise2]Operações[/]");
 var mainMenu = AnsiConsole.Prompt(
     new SelectionPrompt<string>()
-        .Title("[Bold Underline Turquoise2]Operações[/]")
         .WrapAround()
         .AddChoices(
             [
@@ -69,44 +69,3 @@ switch (mainMenu)
         AnsiConsole.WriteLine("nothing");
         break;
 }
-
-
-// var name = AnsiConsole.Ask<string>("What's your [green]name[/]?");
-
-// // Choose size
-// var size = AnsiConsole.Prompt(
-//     new SelectionPrompt<string>()
-//         .Title("What [green]size pizza[/] would you like?")
-//         .AddChoices("Small", "Medium", "Large", "Extra Large"));
-
-// // Select toppings
-// var toppings = AnsiConsole.Prompt(
-//     new MultiSelectionPrompt<string>()
-//         .Title("What [green]toppings[/] would you like?")
-//         .NotRequired()
-//         .InstructionsText("[grey](Press [blue]<space>[/] to toggle, [green]<enter>[/] to confirm)[/]")
-//         .AddChoices("Pepperoni", "Mushrooms", "Sausage",
-//             "Onions", "Green Peppers", "Black Olives",
-//             "Extra Cheese", "Bacon", "Pineapple"));
-
-// // Show order summary
-// AnsiConsole.WriteLine();
-// var panels = new Panel(
-//         new Rows(
-//             new Markup($"[bold]Customer:[/] {name}"),
-//             new Markup($"[bold]Size:[/]     {size}"),
-//             new Markup($"[bold]Toppings:[/] {(toppings.Count > 0 ? string.Join(", ", toppings) : "Plain cheese")}")))
-//     .Header("[yellow]Order Summary[/]")
-//     .Border(BoxBorder.Rounded);
-// AnsiConsole.Write(panels);
-// AnsiConsole.WriteLine();
-
-// // Confirm order
-// if (AnsiConsole.Confirm("Place this order?"))
-// {
-//     AnsiConsole.MarkupLine($"[green]Order placed! Thanks, {name}![/]");
-// }
-// else
-// {
-//     AnsiConsole.MarkupLine("[yellow]Order cancelled.[/]");
-// }
