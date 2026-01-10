@@ -49,7 +49,6 @@ public static class Utils
 
         string stdout = string.Empty;
         string stderr = string.Empty;
-
         if (capturarOutput)
         {
             stdout = await process.StandardOutput.ReadToEndAsync();
@@ -57,8 +56,10 @@ public static class Utils
         }
 
         await process.WaitForExitAsync();
-
-        string descErro = process.ExitCode == 0 ? "" : WingetCodigosErro.CodigosErro[process.ExitCode];
+        
+        string descErro = process.ExitCode == 0 
+            ? "" 
+            : psi.FileName == "winget" ? WingetCodigosErro.CodigosErro[process.ExitCode] : "";
         
         if (process.ExitCode != 0)
         {
