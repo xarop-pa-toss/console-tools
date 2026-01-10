@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using MotorDArranque.Modelos;
 using MotorDArranque.WingetOps;
@@ -31,11 +32,11 @@ public static class Utils
     }
 
     public async static Task<ProcessoResultado> CorrerProcessoAsync(
-        string nomeFicheiro, string argumentos, bool capturarOutput = false)
+        string nomeExe, string argumentos, bool capturarOutput = false, [CallerMemberName] string caller = "")
     {
         var psi = new ProcessStartInfo
         {
-            FileName = nomeFicheiro,
+            FileName = nomeExe,
             Arguments = argumentos,
             UseShellExecute = false,
             CreateNoWindow = true,
@@ -44,7 +45,7 @@ public static class Utils
         };
 
         using var process = Process.Start(psi)
-            ?? throw new InvalidOperationException($"Erro ao iniciar processo {nomeFicheiro}.");
+            ?? throw new InvalidOperationException($"Erro ao iniciar processo {nomeExe}.");
 
         string stdout = string.Empty;
         string stderr = string.Empty;
@@ -57,13 +58,19 @@ public static class Utils
 
         await process.WaitForExitAsync();
 
+        string descErro = process.ExitCode == 0 ? "" : WingetCodigosErro.CodigosErro[process.ExitCode];
+        
         if (process.ExitCode != 0)
-            throw new Exception($"Processo falhou com código {process.ExitCode}.\n{stderr}");
+        {
+            throw new Exception(Mensagens.Erro(
+                $"'{caller ?? "Um processo"}' terminou com erro:" +
+                $"\n{process.ExitCode} - {descErro}"));
+        }
 
         return new ProcessoResultado
         {
             CodigoErro = process.ExitCode,
-            DescErro = process.ExitCode == 0 ? "" : WingetCodigosErro.CodigosErro[process.ExitCode],
+            DescErro = descErro,
             StdOut = stdout,
             StdErr = stderr
         };

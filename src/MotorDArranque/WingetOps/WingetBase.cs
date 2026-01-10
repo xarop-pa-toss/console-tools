@@ -1,4 +1,5 @@
-﻿using ConsoleTools.Utils;
+﻿using System.Runtime.CompilerServices;
+using ConsoleTools.Utils;
 using MotorDArranque.Modelos;
 using Spectre.Console;
 
@@ -16,7 +17,15 @@ namespace MotorDArranque.WingetOps
                 .SpinnerStyle(Style.Parse("bold turquoise2"))
                 .StartAsync("A encontrar programas instalados...", async ctx =>
                 {
-                    listaProgramas = await GetProgramasInstaladosAsync();
+                    try
+                    {
+                        listaProgramas = await GetProgramasInstaladosAsync();
+                    }
+                    catch(Exception e)
+                    {
+                        AnsiConsole.MarkupLine(e.Message);
+                    }
+                    
                     Thread.Sleep(200);
                     AnsiConsole.Markup("[violet]:check_mark:A encontrar programas instalados.[/]");
                 });
@@ -35,10 +44,17 @@ namespace MotorDArranque.WingetOps
 
         private async static Task<List<ProgramInfo>> GetProgramasInstaladosAsync()
         {
-            await Utils.CorrerProcessoAsync(
+            var resultado = await Utils.CorrerProcessoAsync(
                 "winget",
                 $"export --include-versions --output \"{jsonFullPath}\""
             );
+            
+            if (!File.Exists(jsonFullPath))
+            {
+                throw new FileNotFoundException(Mensagens.Erro(
+                    "Lista de Programas obtida com sucesso mas JSON não foi escrito." +
+                    $"\nTem permissões de escrita na pasta [link]{Path.GetDirectoryName(jsonFullPath)}[/]?"));
+            }
 
             return Utils.ParseExportJsonParaListaProgramas(jsonFullPath);
         }
