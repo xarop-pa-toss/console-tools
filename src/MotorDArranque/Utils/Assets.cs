@@ -1,4 +1,4 @@
-﻿namespace MotorDArranque;
+﻿namespace ConsoleTools.Utils;
 
 public static class Assets
 {

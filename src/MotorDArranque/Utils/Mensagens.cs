@@ -1,6 +1,6 @@
 using Spectre.Console;
 
-namespace console_tools.Utils;
+namespace ConsoleTools.Utils;
 
 public static class Mensagens
 {

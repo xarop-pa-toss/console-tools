@@ -1,12 +1,6 @@
-﻿using console_tools.Utils;
+﻿using ConsoleTools.Utils;
 using MotorDArranque.Modelos;
 using Spectre.Console;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
-using System.Text.Json;
-using System.Text.RegularExpressions;
 
 namespace MotorDArranque.WingetOps
 {
@@ -16,92 +10,84 @@ namespace MotorDArranque.WingetOps
 
         public async static Task<List<ProgramInfo>> GetListaProgramasAsync()
         {
-            // List<ProgramInfo> listaCompilada = CompilarListaProgramas(
-            //     listaProgramasInstalados.Result,
-            //     listaVersoesDisponiveis.Result
-            // );
-            var listaProgramas = await GetProgramasInstaladosAsync();
-            listaProgramas = await GetVersoesDisponiveisAsync(listaProgramas);
-            
-            // await AnsiConsole.Status()
-            //     .Spinner(Spinner.Known.Sand)
-            //     .SpinnerStyle(Style.Parse("bold turquoise2"))
-            //     .StartAsync("A compilar informação...", async ctx =>
-            //     {
-            //         var listaResult = await GetListaProgramasWingetCompletaAsync();
-            //
-            //         listaProgramas = listaResult
-            //             .OrderByDescending(x => x.Name)
-            //             .ToList();
-            //
-            //         AnsiConsole.Markup("[violet]:check_mark:Terminado![/]");
-            //     });
-
-            return listaProgramas;
-        }        
-
-        private async static Task<List<ProgramInfo>> GetProgramasInstaladosAsync()
-        {
+            List<ProgramInfo> listaProgramas = new List<ProgramInfo>();
             await AnsiConsole.Status()
                 .Spinner(Spinner.Known.Sand)
                 .SpinnerStyle(Style.Parse("bold turquoise2"))
                 .StartAsync("A encontrar programas instalados...", async ctx =>
                 {
-                    await Utils.CorrerProcessoAsync(
-                        "winget",
-                        $"export --include-versions --output \"{jsonFullPath}\""
-                    );
-
+                    listaProgramas = await GetProgramasInstaladosAsync();
                     Thread.Sleep(200);
                     AnsiConsole.Markup("[violet]:check_mark:A encontrar programas instalados.[/]");
                 });
+
+            await AnsiConsole.Status()
+                .Spinner(Spinner.Known.Sand)
+                .SpinnerStyle(Style.Parse("bold turquoise2"))
+                .StartAsync("A procurar actualizações...", async ctx =>
+                {
+                    listaProgramas = await GetVersoesDisponiveisAsync(listaProgramas);
+                    Thread.Sleep(200);
+                    AnsiConsole.Markup("[violet]:check_mark:A procurar actualizações.[/]");
+                });
+            return listaProgramas;
+        }
+
+        private async static Task<List<ProgramInfo>> GetProgramasInstaladosAsync()
+        {
+            await Utils.CorrerProcessoAsync(
+                "winget",
+                $"export --include-versions --output \"{jsonFullPath}\""
+            );
 
             return Utils.ParseExportJsonParaListaProgramas(jsonFullPath);
         }
 
         private async static Task<List<ProgramInfo>> GetVersoesDisponiveisAsync(List<ProgramInfo> listaProgramas)
         {
-            await AnsiConsole.Status()
-                .Spinner(Spinner.Known.Sand)
-                .SpinnerStyle(Style.Parse("bold turquoise2"))
-                .StartAsync("A procurar actualizações...", async ctx =>
+            foreach (ProgramInfo prginfo in listaProgramas)
+            {
+                var resultadoProcesso = await Utils.CorrerProcessoAsync(
+                    "winget",
+                    $"show --id {prginfo.Id}",
+                    true
+                );
+
+                string stdout = resultadoProcesso.StdOut;
+                // As primeiras duas linhas do winget show têm o formato:
+                // Found SumatraPDF [SumatraPDF.SumatraPDF]
+                // Version: 3.5.2
+                // No entanto, a primeira tem uma quantidade grande de \r, - e espaço em branco, pelo que se lida com a primeira linha separadamente
+                string? nome = null;
+                string? versao = null;
+
+                var linhasEnumerator = stdout.Split('\n', StringSplitOptions.RemoveEmptyEntries).GetEnumerator();
+                if (linhasEnumerator.MoveNext())
                 {
-                    foreach (ProgramInfo prginfo in listaProgramas)
+                    string l = linhasEnumerator.Current.ToString();
+                    int foundIndex = l.IndexOf("Found");
+
+                    if (foundIndex >= 0 && nome == null)
                     {
-                        var resultadoProcesso = await Utils.CorrerProcessoAsync(
-                            "winget",
-                            $"show --id {prginfo.Id}",
-                            true
-                        );
-                
-                        string stdout = resultadoProcesso.StdOut;
-                        // As primeiras duas linhas do winget show têm o formato:
-                        // Found SumatraPDF [SumatraPDF.SumatraPDF]
-                        // Version: 3.5.2
-                        string? nome = null;
-                        string? versao = null;
-
-                        foreach (var linha in stdout.Split('\n', StringSplitOptions.RemoveEmptyEntries))
-                        {
-                            var l = linha.Trim();
-
-                            if (nome == null && l.StartsWith("\rFound "))
-                                prginfo.Name = l
-                                    .Substring(6, l.IndexOf('[') - 6)
-                                    .Trim();
-                            else if (versao == null && l.StartsWith("Version:"))
-                                prginfo.AvailableVersion = l
-                                    .Replace("Version:", "")
-                                    .Trim();
-
-                            if (nome!= null && versao != null)
-                                break;
-                        }
+                        int charAmountRemove = foundIndex + "Found".Length;
+                        nome = l.Substring(charAmountRemove, l.IndexOf('[') - charAmountRemove).Trim();
                     }
+                }
 
-                    Thread.Sleep(200);
-                    AnsiConsole.Markup("[violet]:check_mark:A procurar actualizações.[/]");
-                });
+                while (linhasEnumerator.MoveNext())
+                {
+                    string l = linhasEnumerator.Current.ToString();
+                    if (versao == null && l.Trim().StartsWith("Version:"))
+                        versao = l.Replace("Version:", "").Trim();
+                    
+                    if (nome != null && versao != null)
+                    {
+                        prginfo.Name = nome;
+                        prginfo.AvailableVersion = versao;
+                        break;
+                    }
+                }
+            }
             return listaProgramas;
         }
 

@@ -1,11 +1,16 @@
-﻿using console_tools;
-using console_tools.Modulos;
-using console_tools.Utils;
+﻿using ConsoleTools;
+using ConsoleTools.Modulos;
+using ConsoleTools.Utils;
 using MotorDArranque;
 using Spectre.Console;
 
 // STARTUP
 Modulos Modulos = new Modulos();
+if (OperatingSystem.IsWindows())
+{
+    Console.SetWindowSize(120, 30);
+    Console.SetBufferSize(120,100);
+}
 
 Directory.CreateDirectory(AppPaths.AppDirInUserTemp);
 
@@ -41,7 +46,10 @@ var mainMenu = AnsiConsole.Prompt(
             [
                 "Lista de programas instalados",
                 "Instalar",
-                "Desinstalar"
+                "Desinstalar",
+                "Pacotes de Programas",
+                "Sobre",
+                "Sair"
             ])
         .HighlightStyle(new Style(Styles.Base.Background, decoration: Decoration.Bold)));
 
@@ -49,7 +57,7 @@ var mainMenu = AnsiConsole.Prompt(
 switch (mainMenu)
 {
     case "Lista de programas instalados":
-        await Modulos.TabelaInstalados();
+        await Modulos.ListagemProgramas();
         break;
     //case "Instalar":
     //    await Modulos.EcraInstalar;

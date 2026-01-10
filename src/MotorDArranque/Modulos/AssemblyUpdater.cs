@@ -1,5 +1,5 @@
 using System.Reflection;
-namespace console_tools.Modulos;
+namespace ConsoleTools.Modulos;
 
 public static class AssemblyUpdater
 {

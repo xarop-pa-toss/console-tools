@@ -1,9 +1,10 @@
-﻿using MotorDArranque.Modelos;
-using Spectre.Console;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text.Json;
+using MotorDArranque.Modelos;
+using MotorDArranque.WingetOps;
+using Spectre.Console;
 
-namespace MotorDArranque;
+namespace ConsoleTools.Utils;
 public static class Utils
 {
     public static void WriteGradient(string text, Color start, Color end)
@@ -23,7 +24,8 @@ public static class Utils
 
     public class ProcessoResultado
     {
-        public int ExitCode { get; set; }
+        public int CodigoErro { get; set; }
+        public string DescErro { get; set; } = string.Empty;
         public string StdOut { get; set; } = string.Empty;
         public string StdErr { get; set; } = string.Empty;
     }
@@ -60,7 +62,8 @@ public static class Utils
 
         return new ProcessoResultado
         {
-            ExitCode = process.ExitCode,
+            CodigoErro = process.ExitCode,
+            DescErro = process.ExitCode == 0 ? "" : WingetCodigosErro.CodigosErro[process.ExitCode],
             StdOut = stdout,
             StdErr = stderr
         };
@@ -87,8 +90,6 @@ public static class Utils
                             "", //Não presente neste JSON
                             source.SourceDetails.Name
                         )))
-                .OrderByDescending(x => x.Source)
-                .ThenBy(x => x.Id)
                 .ToList();
 
         return listaProgramas;

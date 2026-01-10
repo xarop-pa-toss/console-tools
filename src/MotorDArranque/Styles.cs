@@ -1,6 +1,6 @@
 using Spectre.Console;
 
-namespace console_tools;
+namespace ConsoleTools;
 
 public static class Styles
 {

@@ -1,11 +1,11 @@
 using MotorDArranque.WingetOps;
 using Spectre.Console;
 
-namespace console_tools.Modulos;
+namespace ConsoleTools.Modulos;
 
 public partial class Modulos
 {
-    public async Task TabelaInstalados()
+    public async Task ListagemProgramas()
     {
         var tabelaInstalados = new Table()
             .Border(TableBorder.SimpleHeavy)
@@ -13,13 +13,18 @@ public partial class Modulos
             .ShowHeaders()
             .ShowRowSeparators()
             .LeftAligned();
-    
+
+        tabelaInstalados.AddColumn("Nome", col => col.LeftAligned());
         tabelaInstalados.AddColumn("Id", col => col.LeftAligned());
         tabelaInstalados.AddColumn("Instalado", col => col.RightAligned());
         tabelaInstalados.AddColumn("Disponivel", col => col.RightAligned());
-        tabelaInstalados.AddColumn("Origem", col => col.Centered());
+        // tabelaInstalados.AddColumn("Origem", col => col.Centered());
        
-        var listaProgramas = await WingetBase.GetListaProgramasAsync();
+        var listaProgramas = (await WingetBase.GetListaProgramasAsync())
+            .OrderByDescending(x => x.AvailableVersion != x.InstalledVersion)
+            .ThenBy(x => x.Name)
+            .ToList();
+        
         if (listaProgramas.Count == 0)
         {
             AnsiConsole.Markup("[yellow]Não existem programas instalados através do Winget.[/]");
@@ -35,6 +40,7 @@ public partial class Modulos
                 : installed;
     
             tabelaInstalados.AddRow(
+                prg.Name,
                 prg.Id,
                 installed,
                 markupAvailable
@@ -54,5 +60,7 @@ public partial class Modulos
                     "Sair"
                 ])
                 .HighlightStyle(new Style(Styles.Base.Background, decoration: Decoration.Bold)));
+        
+        AnsiConsole.Write(tabelaInstalados);
     }
 }
