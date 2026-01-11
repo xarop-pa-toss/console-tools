@@ -27,8 +27,8 @@ namespace MotorDArranque.WingetOps
                     }
                     
                     Thread.Sleep(200);
-                    AnsiConsole.Markup("[violet]:check_mark:A encontrar programas instalados.[/]");
                 });
+            AnsiConsole.Markup($"[violet]:check_mark:Encontrados {listaProgramas.Count} programas.[/]");
 
             await AnsiConsole.Status()
                 .Spinner(Spinner.Known.Sand)
@@ -36,9 +36,8 @@ namespace MotorDArranque.WingetOps
                 .StartAsync("A procurar actualizações...", async ctx =>
                 {
                     listaProgramas = await GetVersoesDisponiveisAsync(listaProgramas);
-                    Thread.Sleep(200);
-                    AnsiConsole.Markup("[violet]:check_mark:A procurar actualizações.[/]");
                 });
+            AnsiConsole.Markup("[violet]:check_mark:A procurar actualizações.[/]");
             
             return listaProgramas
                 .OrderByDescending(x => x.InstalledVersion != x.AvailableVersion)
