@@ -12,6 +12,8 @@ namespace MotorDArranque.WingetOps
         public async static Task<List<ProgramInfo>> GetListaProgramasAsync()
         {
             List<ProgramInfo> listaProgramas = new List<ProgramInfo>();
+
+            // Get installed IDs and installed versions
             await AnsiConsole.Status()
                 .Spinner(Spinner.Known.Sand)
                 .SpinnerStyle(Style.Parse("bold turquoise2"))
@@ -21,24 +23,54 @@ namespace MotorDArranque.WingetOps
                     {
                         listaProgramas = await GetProgramasInstaladosAsync();
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         AnsiConsole.MarkupLine(e.Message);
                     }
-                    
+
                     Thread.Sleep(200);
                 });
+            if (listaProgramas.Count == 0)
+            {
+                throw new FileNotFoundException("Não foram encontrados programas instalados pelo Winget.");
+            }
             AnsiConsole.Markup($"[violet]:check_mark:Encontrados {listaProgramas.Count} programas.[/]");
-
-            await AnsiConsole.Status()
-                .Spinner(Spinner.Known.Sand)
-                .SpinnerStyle(Style.Parse("bold turquoise2"))
-                .StartAsync("A procurar actualizações...", async ctx =>
+            
+            // Get names and available update versions for previously found programs 
+            await AnsiConsole.Progress()
+                .AutoClear(false)
+                .StartAsync(async ctx =>
                 {
-                    listaProgramas = await GetVersoesDisponiveisAsync(listaProgramas);
+                    var semaforo = new SemaphoreSlim(4);
+                    List<string> processErrors = new List<string>();
+                    
+                    var progressTask = ctx.AddTask("A procurar actualizações...", maxValue: listaProgramas.Count);
+
+                    var tasks = listaProgramas.Select(async prog =>
+                    {
+                        await semaforo.WaitAsync();
+                        try
+                        {
+                            await GetVersoesDisponiveisAsync(prog);
+                        }
+                        catch (Exception e)
+                        {
+                            processErrors.Add(e.Message);
+                            prog.AvailableVersion = "[red]erro";
+                            prog.AvailableVersion = prog.Id;
+                        }
+                        finally
+                        {
+                            progressTask.Increment(1);
+                            progressTask.Description = prog.Id;
+                            semaforo.Release();
+                        }
+                    });
+                    
+                    await Task.WhenAll(tasks);
                 });
             AnsiConsole.Markup("[violet]:check_mark:A procurar actualizações.[/]");
-            
+
             return listaProgramas
                 .OrderByDescending(x => x.InstalledVersion != x.AvailableVersion)
                 .ThenBy(x => x.Name)
@@ -51,7 +83,7 @@ namespace MotorDArranque.WingetOps
                 "winget",
                 $"export --include-versions --output \"{jsonFullPath}\""
             );
-            
+
             if (!File.Exists(jsonFullPath))
             {
                 throw new FileNotFoundException(Mensagens.Erro(
@@ -62,52 +94,48 @@ namespace MotorDArranque.WingetOps
             return Utils.ParseExportJsonParaListaProgramas(jsonFullPath);
         }
 
-        private async static Task<List<ProgramInfo>> GetVersoesDisponiveisAsync(List<ProgramInfo> listaProgramas)
+        private async static Task GetVersoesDisponiveisAsync(ProgramInfo prog)
         {
-            foreach (ProgramInfo prginfo in listaProgramas)
+            var resultadoProcesso = await Utils.CorrerProcessoAsync(
+                "winget",
+                $"show --id {prog.Id}",
+                true
+            );
+
+            string stdout = resultadoProcesso.StdOut;
+            // As primeiras duas linhas do winget show têm o formato:
+            // Found SumatraPDF [SumatraPDF.SumatraPDF]
+            // Version: 3.5.2
+            // No entanto, a primeira tem uma quantidade grande de \r, - e espaço em branco, pelo que se lida com a primeira linha separadamente
+            string? nome = null;
+            string? versao = null;
+
+            var linhasEnumerator = stdout.Split('\n', StringSplitOptions.RemoveEmptyEntries).GetEnumerator();
+            if (linhasEnumerator.MoveNext())
             {
-                var resultadoProcesso = await Utils.CorrerProcessoAsync(
-                    "winget",
-                    $"show --id {prginfo.Id}",
-                    true
-                );
+                string l = linhasEnumerator.Current.ToString();
+                int foundIndex = l.IndexOf("Found");
 
-                string stdout = resultadoProcesso.StdOut;
-                // As primeiras duas linhas do winget show têm o formato:
-                // Found SumatraPDF [SumatraPDF.SumatraPDF]
-                // Version: 3.5.2
-                // No entanto, a primeira tem uma quantidade grande de \r, - e espaço em branco, pelo que se lida com a primeira linha separadamente
-                string? nome = null;
-                string? versao = null;
-
-                var linhasEnumerator = stdout.Split('\n', StringSplitOptions.RemoveEmptyEntries).GetEnumerator();
-                if (linhasEnumerator.MoveNext())
+                if (foundIndex >= 0 && nome == null)
                 {
-                    string l = linhasEnumerator.Current.ToString();
-                    int foundIndex = l.IndexOf("Found");
-
-                    if (foundIndex >= 0 && nome == null)
-                    {
-                        int charAmountRemove = foundIndex + "Found".Length;
-                        nome = l.Substring(charAmountRemove, l.IndexOf('[') - charAmountRemove).Trim();
-                    }
-                }
-
-                while (linhasEnumerator.MoveNext())
-                {
-                    string l = linhasEnumerator.Current.ToString();
-                    if (versao == null && l.Trim().StartsWith("Version:"))
-                        versao = l.Replace("Version:", "").Trim();
-                    
-                    if (nome != null && versao != null)
-                    {
-                        prginfo.Name = nome;
-                        prginfo.AvailableVersion = versao;
-                        break;
-                    }
+                    int charAmountRemove = foundIndex + "Found".Length;
+                    nome = l.Substring(charAmountRemove, l.IndexOf('[') - charAmountRemove).Trim();
                 }
             }
-            return listaProgramas;
+
+            while (linhasEnumerator.MoveNext())
+            {
+                string l = linhasEnumerator.Current.ToString();
+                if (versao == null && l.Trim().StartsWith("Version:"))
+                    versao = l.Replace("Version:", "").Trim();
+
+                if (nome != null && versao != null)
+                {
+                    prog.Name = nome;
+                    prog.AvailableVersion = versao;
+                    break;
+                }
+            }
         }
 
         [Obsolete]
