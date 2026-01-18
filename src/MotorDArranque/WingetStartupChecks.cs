@@ -17,24 +17,23 @@ public class WingetStartupChecks
 
     public void Run()
     {
-        if (ShellDetector.IsRunningInCmd())
-        {
-            AnsiConsole.MarkupLine(Mensagens.Aviso("O programa está a correr em CMD mas recomenda-se que use Powershell."));
-            if (AnsiConsole.Confirm("Reiniciar em Powershell?"))
-            {
-                InstalarWingetComPowershell();
-                
-                Utils.ReiniciarPrograma(3000);
-            }
-        }
+        // [UNRELIABLE]
+        //
+        // if (!ShellDetector.IsRunningInPowerShell())
+        // {
+        //     Mensagens.Aviso("O programa está a correr em CMD mas recomenda-se que use Powershell.");
+        //     if (AnsiConsole.Confirm("Reiniciar em Powershell?"))
+        //     {
+        //         Utils.ReiniciarPrograma(3000);
+        //     }
+        // }
         
         if (!_wget.IsInstalled)
         {
-            AnsiConsole.MarkupLine(Mensagens.Erro("WinGet não encontrado no sistema. É necessário instalar para usar o programa."));
+            Mensagens.Erro("WinGet não encontrado no sistema. É necessário instalar para usar o programa.");
             if (AnsiConsole.Confirm("Instalar? (script powershell)"))
             {
                 InstalarWingetComPowershell();
-                
                 Utils.ReiniciarPrograma(3000);
             }
         }
@@ -45,8 +44,7 @@ public class WingetStartupChecks
         
         if (wingetPackage.AvailableVersion > wingetPackage.Version)
         {
-            AnsiConsole.Markup(Mensagens.Aviso(
-                $"O WinGet está na versão [bold]{wingetPackage.VersionString}[/] mas está disponível a versão [bold]{wingetPackage.AvailableVersionString}[/]"));
+            Mensagens.Aviso($"O WinGet está na versão [bold]{wingetPackage.VersionString}[/] mas está disponível a versão [bold]{wingetPackage.AvailableVersionString}[/]");
 
             if (AnsiConsole.Confirm("Actualizar WinGet?"))
             {
@@ -77,7 +75,7 @@ public class WingetStartupChecks
         process.ErrorDataReceived += (_, e) =>
         {
             if (e.Data != null)
-                AnsiConsole.WriteLine(Mensagens.Erro(e.Data));
+                Mensagens.Erro(e.Data);
             errored = true;
         };
 
@@ -89,7 +87,7 @@ public class WingetStartupChecks
         AnsiConsole.WriteLine("");
         if (errored)
         {
-            AnsiConsole.MarkupLine(Mensagens.Aviso("Ocorreram erros no script PS de instalação do Winget.\nÉ possível que não tenha siddo correctamente instalado."));
+            Mensagens.Aviso("Ocorreram erros no script PS de instalação do Winget.\nÉ possível que não tenha sido correctamente instalado.");
             return;
         }
         

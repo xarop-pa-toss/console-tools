@@ -1,8 +1,6 @@
-﻿using System.Runtime.InteropServices.ObjectiveC;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using ConsoleTools;
 using ConsoleTools.Modulos;
-using ConsoleTools.Utils;
 using MotorDArranque;
 using Spectre.Console;
 using WGetNET;
@@ -15,6 +13,7 @@ services.AddSingleton<WingetStartupChecks>();
 services.AddSingleton<Modulos>();
 
 var provider = services.BuildServiceProvider();
+var modulos = provider.GetRequiredService<Modulos>();
 
 // VERIFICA ESTADO WINGET 
 var checks = provider.GetRequiredService<WingetStartupChecks>();
@@ -50,7 +49,6 @@ var mainMenu = AnsiConsole.Prompt(
         .HighlightStyle(new Style(Styles.Base.Background, decoration: Decoration.Bold)));
 
 // RESULTADOS MAIN MENU
-var modulos = provider.GetRequiredService<Modulos>();
 switch (mainMenu)
 {
     case "Lista de programas instalados":
