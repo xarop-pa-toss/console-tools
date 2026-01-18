@@ -4,8 +4,8 @@ namespace ConsoleTools.Utils;
 
 public static class Mensagens
 {
-    private static string _erro { get; } = "[red]:cross_mark: Erro: ";
-    private static string _aviso { get; } = "[yellow]:warning: Aviso: ";
+    private static string _erro { get; } = "[red]:cross_mark:Erro: ";
+    private static string _aviso { get; } = "[yellow]:warning:Aviso: ";
 
     public static string Erro(string mensagem)
     {

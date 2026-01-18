@@ -1,11 +1,14 @@
 ﻿using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text.Json;
 using MotorDArranque.Modelos;
 using MotorDArranque.WingetOps;
 using Spectre.Console;
 
 namespace ConsoleTools.Utils;
+
 public static class Utils
 {
     public static void WriteGradient(string text, Color start, Color end)
@@ -45,7 +48,7 @@ public static class Utils
         };
 
         using var process = Process.Start(psi)
-            ?? throw new InvalidOperationException($"Erro ao iniciar processo {nomeExe}.");
+                            ?? throw new InvalidOperationException($"Erro ao iniciar processo {nomeExe}.");
 
         string stdout = string.Empty;
         string stderr = string.Empty;
@@ -56,11 +59,13 @@ public static class Utils
         }
 
         await process.WaitForExitAsync();
-        
-        string descErro = process.ExitCode == 0 
-            ? "" 
-            : psi.FileName == "winget" ? WingetCodigosErro.CodigosErro[process.ExitCode] : "";
-        
+
+        string descErro = process.ExitCode == 0
+            ? ""
+            : psi.FileName == "winget"
+                ? WingetCodigosErro.CodigosErro[process.ExitCode]
+                : "";
+
         if (process.ExitCode != 0)
         {
             throw new Exception(Mensagens.Erro(
@@ -101,5 +106,40 @@ public static class Utils
                 .ToList();
 
         return listaProgramas;
+    }
+
+    public static void ReiniciarPrograma(int delay, bool usePowershell = true)
+    {
+        if (delay > 0)
+        {
+            AnsiConsole.MarkupLine("A reiniciar...");
+            Thread.Sleep(delay);
+        }
+        
+        string exePath = Assembly.GetExecutingAssembly().Location;
+        var prcInfo = new ProcessStartInfo();
+
+        if (usePowershell)
+        {
+            prcInfo = new ProcessStartInfo()
+            {
+                FileName = "powershell.exe",
+                Arguments = $"-NoExit -Command \"& '{exePath}'\"",
+                Verb = "runas",
+                UseShellExecute = true
+            };
+        }
+        else
+        {
+            prcInfo = new ProcessStartInfo
+            {
+                FileName = "cmd.exe",
+                Arguments = $"/c \"\"{exePath}\"\"",
+                UseShellExecute = true
+            };
+        }
+
+        Process.Start(prcInfo);
+        Environment.Exit(0);
     }
 }

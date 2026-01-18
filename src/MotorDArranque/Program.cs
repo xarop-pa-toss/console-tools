@@ -1,9 +1,19 @@
-﻿using ConsoleTools;
+﻿using System.Runtime.InteropServices.ObjectiveC;
+using ConsoleTools;
 using ConsoleTools.Modulos;
+using ConsoleTools.Utils;
 using MotorDArranque;
 using Spectre.Console;
+using WGetNET;
 
 // STARTUP
+WinGet wget = new WinGet();
+WingetStartupChecks checks = new WingetStartupChecks(wget);
+checks.Run();
+
+WinGetPackageManager packMgr = new WinGetPackageManager();
+packMgr.GetUpgradeablePackagesAsync();
+
 Modulos Modulos = new Modulos();
 // if (OperatingSystem.IsWindows())
 // {

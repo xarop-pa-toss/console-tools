@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="Spectre.Console" Version="0.54.0" />
+    <PackageReference Include="WGet.NET" Version="4.4.1" />
   </ItemGroup>
 
 </Project>
