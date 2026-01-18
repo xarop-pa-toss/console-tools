@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
 using System.Text.Json;
 using MotorDArranque.Modelos;
 using MotorDArranque.WingetOps;
@@ -16,9 +15,9 @@ public static class Utils
         for (int i = 0; i < text.Length; i++)
         {
             // Linear interpolation for RGB
-            int r = (int)(start.R + (end.R - start.R) * i / (text.Length - 1));
-            int g = (int)(start.G + (end.G - start.G) * i / (text.Length - 1));
-            int b = (int)(start.B + (end.B - start.B) * i / (text.Length - 1));
+            int r = (start.R + (end.R - start.R) * i / (text.Length - 1));
+            int g = (start.G + (end.G - start.G) * i / (text.Length - 1));
+            int b = (start.B + (end.B - start.B) * i / (text.Length - 1));
 
             // Print character with interpolated color
             AnsiConsole.Markup($"[rgb({r},{g},{b})]{text[i]}[/]");
@@ -35,7 +34,7 @@ public static class Utils
     }
 
     public async static Task<ProcessoResultado> CorrerProcessoAsync(
-        string nomeExe, string argumentos, bool capturarOutput = false, [CallerMemberName] string caller = "")
+        string nomeExe, string argumentos, bool capturarOutput = false, [CallerMemberName] string? caller = "")
     {
         var psi = new ProcessStartInfo
         {
@@ -110,27 +109,25 @@ public static class Utils
 
     public static void ReiniciarPrograma(int delay, bool usePowershell = true)
     {
-        if (delay > 0)
-        {
-            AnsiConsole.MarkupLine("A reiniciar...");
-            Thread.Sleep(delay);
-        }
-        
         string exePath = Assembly.GetExecutingAssembly().Location;
-        var prcInfo = new ProcessStartInfo();
+        ProcessStartInfo prcInfo;
 
         if (usePowershell)
         {
+            AnsiConsole.MarkupLine("A reiniciar em Powershell (admin)...");
             prcInfo = new ProcessStartInfo()
             {
                 FileName = "powershell.exe",
-                Arguments = $"-NoExit -Command \"& '{exePath}'\"",
+                Arguments = "-NoExit -Command \"$Host.UI.RawUI.BufferSize = " +
+                            "New-Object Management.Automation.Host.Size(500, $Host.UI.RawUI.BufferSize.Height); " +
+                            "& '" + exePath + "'\"",
                 Verb = "runas",
                 UseShellExecute = true
             };
         }
         else
         {
+            AnsiConsole.MarkupLine("A reiniciar em CMD (admin)...");
             prcInfo = new ProcessStartInfo
             {
                 FileName = "cmd.exe",
@@ -139,6 +136,7 @@ public static class Utils
             };
         }
 
+        Thread.Sleep(delay);
         Process.Start(prcInfo);
         Environment.Exit(0);
     }

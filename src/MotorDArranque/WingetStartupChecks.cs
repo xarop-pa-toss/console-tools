@@ -8,26 +8,40 @@ namespace MotorDArranque;
 public class WingetStartupChecks
 {
     private readonly WinGet _wget;
-    public WingetStartupChecks(WinGet wget)
+    private readonly WinGetPackageManager _packMgr;
+    public WingetStartupChecks(WinGet wget, WinGetPackageManager packMgr)
     {
         _wget = wget;
+        _packMgr = packMgr;
     }
 
     public void Run()
     {
+        if (ShellDetector.IsRunningInCmd())
+        {
+            AnsiConsole.MarkupLine(Mensagens.Aviso("O programa está a correr em CMD mas recomenda-se que use Powershell."));
+            if (AnsiConsole.Confirm("Reiniciar em Powershell?"))
+            {
+                InstalarWingetComPowershell();
+                
+                Utils.ReiniciarPrograma(3000);
+            }
+        }
+        
         if (!_wget.IsInstalled)
         {
-            AnsiConsole.Markup(Mensagens.Erro("WinGet não encontrado no sistema. É necessário instalar para usar o programa."));
+            AnsiConsole.MarkupLine(Mensagens.Erro("WinGet não encontrado no sistema. É necessário instalar para usar o programa."));
             if (AnsiConsole.Confirm("Instalar? (script powershell)"))
             {
                 InstalarWingetComPowershell();
+                
                 Utils.ReiniciarPrograma(3000);
             }
         }
 
-        var packMgr = new WinGetPackageManager();
+        var _packMgr = new WinGetPackageManager();
         string wgetId = "Microsoft.AppInstaller";
-        var wingetPackage = packMgr.GetInstalledPackages(wgetId, true).FirstOrDefault()!;
+        var wingetPackage = _packMgr.GetInstalledPackages(wgetId, true).FirstOrDefault()!;
         
         if (wingetPackage.AvailableVersion > wingetPackage.Version)
         {
@@ -36,7 +50,7 @@ public class WingetStartupChecks
 
             if (AnsiConsole.Confirm("Actualizar WinGet?"))
             {
-                packMgr.UpgradePackage(wgetId);
+                _packMgr.UpgradePackage(wgetId);
             }
         }
     }
@@ -80,11 +94,5 @@ public class WingetStartupChecks
         }
         
         AnsiConsole.MarkupLine("[underline turquoise2]WinGet instalado com sucesso.[/]");
-        AnsiConsole.MarkupLine("[bold violet]O programa irá reiniciar em modo administrador em breve.[/]");
-
-        Utils.ReiniciarPrograma(3000);
-
-
-
     }
 }
