@@ -67,9 +67,8 @@ public static class Utils
 
         if (process.ExitCode != 0)
         {
-            throw new Exception(Mensagens.Erro(
-                $"'{caller ?? "Um processo"}' terminou com erro:" +
-                $"\n{process.ExitCode} - {descErro}"));
+            throw new Exception($"'{caller ?? "Um processo"}' terminou com erro:" +
+                                $"\n{process.ExitCode} - {descErro}");
         }
 
         return new ProcessoResultado
@@ -117,7 +116,7 @@ public static class Utils
             AnsiConsole.MarkupLine("A reiniciar em Powershell (admin)...");
             prcInfo = new ProcessStartInfo()
             {
-                FileName = "powershell.exe",
+                FileName = "pwsh.exe",
                 Arguments = "-NoExit -Command \"$Host.UI.RawUI.BufferSize = " +
                             "New-Object Management.Automation.Host.Size(500, $Host.UI.RawUI.BufferSize.Height); " +
                             "& '" + exePath + "'\"",

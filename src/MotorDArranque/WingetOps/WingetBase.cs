@@ -86,9 +86,8 @@ namespace MotorDArranque.WingetOps
 
             if (!File.Exists(jsonFullPath))
             {
-                throw new FileNotFoundException(Mensagens.Erro(
-                    "Lista de Programas obtida com sucesso mas JSON não foi escrito." +
-                    $"\nTem permissões de escrita na pasta [link]{Path.GetDirectoryName(jsonFullPath)}[/]?"));
+                throw new FileNotFoundException("Lista de Programas obtida com sucesso mas JSON não foi escrito." +
+                                                $"\nTem permissões de escrita na pasta [link]{Path.GetDirectoryName(jsonFullPath)}[/]?");
             }
 
             return Utils.ParseExportJsonParaListaProgramas(jsonFullPath);
