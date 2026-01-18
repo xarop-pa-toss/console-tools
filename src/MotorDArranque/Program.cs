@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices.ObjectiveC;
+using Microsoft.Extensions.DependencyInjection;
 using ConsoleTools;
 using ConsoleTools.Modulos;
 using ConsoleTools.Utils;
@@ -6,21 +7,20 @@ using MotorDArranque;
 using Spectre.Console;
 using WGetNET;
 
-// STARTUP
-WinGet wget = new WinGet();
-WingetStartupChecks checks = new WingetStartupChecks(wget);
+// DI SETUP
+var services = new ServiceCollection();
+services.AddSingleton<WinGet>();
+services.AddSingleton<WinGetPackageManager>();
+services.AddSingleton<WingetStartupChecks>();
+services.AddSingleton<Modulos>();
+
+var provider = services.BuildServiceProvider();
+
+// VERIFICA ESTADO WINGET 
+var checks = provider.GetRequiredService<WingetStartupChecks>();
 checks.Run();
 
-WinGetPackageManager packMgr = new WinGetPackageManager();
-packMgr.GetUpgradeablePackagesAsync();
-
-Modulos Modulos = new Modulos();
-// if (OperatingSystem.IsWindows())
-// {
-//     Console.SetWindowSize(500, 50);
-//     Console.SetBufferSize(500,100);
-//     AnsiConsole.Profile.Width = Console.WindowWidth;
-// }
+// CRIA PASTAS
 Directory.CreateDirectory(AppPaths.AppDirInUserTemp);
 // Utils.WriteGradient(Assets.InfoLogo, Color.Purple, Color.Aqua);
 //
@@ -50,10 +50,11 @@ var mainMenu = AnsiConsole.Prompt(
         .HighlightStyle(new Style(Styles.Base.Background, decoration: Decoration.Bold)));
 
 // RESULTADOS MAIN MENU
+var modulos = provider.GetRequiredService<Modulos>();
 switch (mainMenu)
 {
     case "Lista de programas instalados":
-        await Modulos.ListagemProgramas();
+        await modulos.ListagemProgramas();
         break;
     //case "Instalar":
     //    await Modulos.EcraInstalar;
