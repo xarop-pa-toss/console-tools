@@ -116,7 +116,7 @@ public static class Utils
             AnsiConsole.MarkupLine("A reiniciar em Powershell (admin)...");
             prcInfo = new ProcessStartInfo()
             {
-                FileName = "pwsh.exe",
+                FileName = "powershell.exe",
                 Arguments = "-NoExit -Command \"$Host.UI.RawUI.BufferSize = " +
                             "New-Object Management.Automation.Host.Size(500, $Host.UI.RawUI.BufferSize.Height); " +
                             "& '" + exePath + "'\"",
