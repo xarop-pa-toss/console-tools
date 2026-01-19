@@ -1,7 +1,8 @@
-using System.Diagnostics;
 using ConsoleTools;
 using ConsoleTools.Utils;
 using Spectre.Console;
+using System.Diagnostics;
+using System.Text;
 using WGetNET;
 namespace MotorDArranque;
 
@@ -58,39 +59,53 @@ public class WingetStartupChecks
         var prcInfo = new ProcessStartInfo
         {
             FileName = "powershell",
-            Arguments = "-NoProfile -ExecutionPolicy Bypass -Command \"Invoke-WebRequest https://aka.ms/getwinget -OutFile winget.msixbundle; Add-AppxPackage winget.msixbundle\"",
+            Arguments = "-NoProfile -ExecutionPolicy Bypass -Command \"Write-Host 'Downloading WinGet...'; Invoke-WebRequest https://aka.ms/getwinget -OutFile winget.msixbundle -Verbose; Write-Host 'Installing WinGet...'; Add-AppxPackage winget.msixbundle -Verbose\"",
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
             CreateNoWindow = true
         };
-        var process = new Process { StartInfo = prcInfo };
 
+        var process = new Process { StartInfo = prcInfo };
         bool errored = false;
+
+        // Capture all output streams
+        var outputBuilder = new StringBuilder();
+        var errorBuilder = new StringBuilder();
+
         process.OutputDataReceived += (_, e) =>
         {
             if (e.Data != null)
+            {
                 AnsiConsole.WriteLine(e.Data);
+                outputBuilder.AppendLine(e.Data);
+            }
         };
+
         process.ErrorDataReceived += (_, e) =>
         {
             if (e.Data != null)
-                Mensagens.Erro(e.Data);
-            errored = true;
+            {
+                // Note: -Verbose output goes to stderr in PowerShell
+                AnsiConsole.WriteLine($"[dim]{e.Data}[/]");
+                errorBuilder.AppendLine(e.Data);
+            }
         };
 
         process.Start();
         process.BeginOutputReadLine();
         process.BeginErrorReadLine();
         process.WaitForExit();
-        
+
+        // Check exit code instead of just error stream
         AnsiConsole.WriteLine("");
-        if (errored)
+        if (process.ExitCode != 0)
         {
             Mensagens.Aviso("Ocorreram erros no script PS de instalação do Winget.\nÉ possível que não tenha sido correctamente instalado.");
             return;
         }
-        
+
         AnsiConsole.MarkupLine("[underline turquoise2]WinGet instalado com sucesso.[/]");
+        Utils.ReiniciarPrograma(200);
     }
 }
