@@ -31,10 +31,11 @@ public partial class Modulos
         string headers = string.Concat(
             "[underline turquoise2]",
             new string(' ', 8),
-            "Name".PadRight(nameWidth),
+            "Nome".PadRight(nameWidth),
             "Id".PadRight(idWidth),
-            "Installed".PadRight(instWidth),
-            "Available".PadRight(dispWidth),
+            "Instalado".PadRight(instWidth),
+            "Disponivel".PadRight(dispWidth),
+            "Actualizado?",
             "[/]"
         );
 
@@ -43,15 +44,18 @@ public partial class Modulos
                 .Title(headers)
                 .NotRequired()
                 .HighlightStyle(Color.Violet)
-                .MoreChoicesText("Mais programas abaixo!")
-                .PageSize(20)
+                .PageSize(25)
                 .AddChoices(listaProgWinget.Select(p =>
                     string.Concat(
                         new string(' ', 2),
                         p.Name.PadRight(nameWidth),
                         p.Id.PadRight(idWidth),
                         p.VersionString.PadRight(instWidth),
-                        p.AvailableVersionString.PadRight(dispWidth)
+                        p.AvailableVersionString.PadRight(dispWidth),
+                        (p.Version < p.AvailableVersion
+                            ? new Markup("[yellow]:check_mark:[/]")
+                            : new Markup("[green]:check_mark:[/]")
+
                     )
                 ))
         );
