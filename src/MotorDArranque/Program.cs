@@ -40,7 +40,7 @@ var mainMenu = AnsiConsole.Prompt(
         .AddChoices(
             [
                 "Lista de programas instalados",
-                "Instalar",
+                "Instalar Winget",
                 "Desinstalar",
                 "Pacotes de Programas",
                 "Sobre",
@@ -54,9 +54,10 @@ switch (mainMenu)
     case "Lista de programas instalados":
         await modulos.ListagemProgramas();
         break;
-    //case "Instalar":
-    //    await Modulos.EcraInstalar;
-    //    break;
+    case "Instalar Winget":
+        var wingetStartup = new WingetStartupChecks(new WinGet(), new WinGetPackageManager());
+        wingetStartup.InstalarWingetComPowershell();
+        break;
     //case "Desinstalar":
     //    await Modulos.EcraDesinstalar;
     //    break;
