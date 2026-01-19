@@ -58,9 +58,9 @@ switch (mainMenu)
         var wingetStartup = new WingetStartupChecks(new WinGet(), new WinGetPackageManager());
         wingetStartup.InstalarWingetComPowershell();
         break;
-    //case "Desinstalar":
-    //    await Modulos.EcraDesinstalar;
-    //    break;
+    case "Desinstalar":
+        // await modulos.EcraDesinstalar;
+        break;
     default:
         AnsiConsole.WriteLine("nothing");
         break;

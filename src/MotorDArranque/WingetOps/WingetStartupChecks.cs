@@ -1,4 +1,3 @@
-using ConsoleTools;
 using ConsoleTools.Utils;
 using Spectre.Console;
 using System.Diagnostics;
@@ -38,8 +37,7 @@ public class WingetStartupChecks
                 Utils.ReiniciarPrograma(3000);
             }
         }
-
-        var _packMgr = new WinGetPackageManager();
+        
         string wgetId = "Microsoft.AppInstaller";
         var wingetPackage = _packMgr.GetInstalledPackages(wgetId, true).FirstOrDefault()!;
         
@@ -67,7 +65,6 @@ public class WingetStartupChecks
         };
 
         var process = new Process { StartInfo = prcInfo };
-        bool errored = false;
 
         // Capture all output streams
         var outputBuilder = new StringBuilder();

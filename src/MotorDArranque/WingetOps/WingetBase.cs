@@ -9,7 +9,7 @@ namespace MotorDArranque.WingetOps
     {
         static string jsonFullPath = Path.Combine(AppPaths.AppDirInUserTemp, "winget_instalados.json");
 
-        public async static Task<List<ProgramInfo>> GetListaProgramasAsync()
+        public static async Task<List<ProgramInfo>> GetListaProgramasAsync()
         {
             List<ProgramInfo> listaProgramas = new List<ProgramInfo>();
 
@@ -30,6 +30,7 @@ namespace MotorDArranque.WingetOps
 
                     Thread.Sleep(200);
                 });
+            
             if (listaProgramas.Count == 0)
             {
                 throw new FileNotFoundException("Não foram encontrados programas instalados pelo Winget.");
@@ -77,7 +78,7 @@ namespace MotorDArranque.WingetOps
                 .ToList();
         }
 
-        private async static Task<List<ProgramInfo>> GetProgramasInstaladosAsync()
+        private static async Task<List<ProgramInfo>> GetProgramasInstaladosAsync()
         {
             var resultado = await Utils.CorrerProcessoAsync(
                 "winget",
@@ -93,7 +94,7 @@ namespace MotorDArranque.WingetOps
             return Utils.ParseExportJsonParaListaProgramas(jsonFullPath);
         }
 
-        private async static Task GetVersoesDisponiveisAsync(ProgramInfo prog)
+        private static async Task GetVersoesDisponiveisAsync(ProgramInfo prog)
         {
             var resultadoProcesso = await Utils.CorrerProcessoAsync(
                 "winget",
@@ -138,7 +139,7 @@ namespace MotorDArranque.WingetOps
         }
 
         [Obsolete]
-        private async static Task<List<ProgramInfo>> GetListaProgramasWingetCompletaAsync()
+        private static async Task<List<ProgramInfo>> GetListaProgramasWingetCompletaAsync()
         {
             var resultadoProcesso = await Utils.CorrerProcessoAsync(
                 "winget",
@@ -212,7 +213,7 @@ namespace MotorDArranque.WingetOps
             return listaProgramas;
         }
 
-        public async static Task ExportarListaAsync(string jsonExportPath)
+        public static async Task ExportarListaAsync(string jsonExportPath)
         {
             //
             //TODO: Exportar Pacote para formato JSON "winget export"
@@ -231,7 +232,7 @@ namespace MotorDArranque.WingetOps
             //    });
         }
 
-        public async static Task ImportarListaAsync(string jsonImportPath)
+        public static async Task ImportarListaAsync(string jsonImportPath)
         {
             //TODO: Criar novo Pacote a partir de um JSON "winget export"
         }

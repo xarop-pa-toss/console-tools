@@ -32,7 +32,7 @@ public static class Utils
         public string StdErr { get; set; } = string.Empty;
     }
 
-    public async static Task<ProcessoResultado> CorrerProcessoAsync(
+    public static async Task<ProcessoResultado> CorrerProcessoAsync(
         string nomeExe, string argumentos, bool capturarOutput = false, [CallerMemberName] string? caller = "")
     {
         var psi = new ProcessStartInfo

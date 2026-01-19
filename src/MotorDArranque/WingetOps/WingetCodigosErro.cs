@@ -2,7 +2,7 @@ namespace MotorDArranque.WingetOps;
 
 public static class WingetCodigosErro
 {
-    public readonly static Dictionary<int, string> CodigosErro = new()
+    public static readonly Dictionary<int, string> CodigosErro = new()
     {
         {-1978335231, "Internal Error"},
         {-1978335230, "Invalid command line arguments"},

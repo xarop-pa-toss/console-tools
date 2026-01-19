@@ -1,5 +1,3 @@
-using MotorDArranque.Modelos;
-using MotorDArranque.WingetOps;
 using Spectre.Console;
 using WGetNET;
 
@@ -7,19 +5,15 @@ namespace ConsoleTools.Modulos;
 
 public partial class Modulos
 {
-    private readonly WinGet _wget;
-    private readonly WinGetPackageManager _packMgr;
-
-    public Modulos(WinGet wget, WinGetPackageManager packMgr)
-    {
-        _wget = wget;
-        _packMgr = packMgr;
-    }
     public async Task ListagemProgramas()
     {
         // var listaProgramas = await WingetBase.GetListaProgramasAsync();
         var listaProgramas = await _packMgr.GetInstalledPackagesAsync();
-        var listaProgWinget = listaProgramas.FindAll(p => p.SourceName == "winget");
+        var listaProgWinget = listaProgramas
+            .FindAll(p => p.SourceName == "winget")
+            .OrderByDescending(p => p.Version != p.AvailableVersion)
+            .ThenBy(p => p.Name)
+            .ToList();
         
         // Largura das colunas reflecte o nome e id mais longos
         int nameWidth = listaProgWinget.Max(p => p.Name.Length) + 3;
@@ -54,11 +48,9 @@ public partial class Modulos
                         p.AvailableVersionString.PadRight(dispWidth),
                         (p.Version < p.AvailableVersion
                             ? new Markup("[yellow]:check_mark:[/]")
-                            : new Markup("[green]:check_mark:[/]")
-
-                    )
+                            : new Markup("[green]:check_mark:[/]"))
                 ))
-        );
+        ));
         
         AnsiConsole.MarkupLine("[green]Selected:[/]");
         foreach (var s in selected)

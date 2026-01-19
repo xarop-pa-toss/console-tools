@@ -1,7 +1,7 @@
 using System.Reflection;
 namespace ConsoleTools.Modulos;
 
-public static class AssemblyUpdater
+public partial class Modulos
 {
     // public Task CheckForUpdates()
     // {
