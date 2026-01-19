@@ -14,12 +14,11 @@ public static class Utils
     {
         for (int i = 0; i < text.Length; i++)
         {
-            // Linear interpolation for RGB
+            // Interpolação linear para RGB
             int r = (start.R + (end.R - start.R) * i / (text.Length - 1));
             int g = (start.G + (end.G - start.G) * i / (text.Length - 1));
             int b = (start.B + (end.B - start.B) * i / (text.Length - 1));
 
-            // Print character with interpolated color
             AnsiConsole.Markup($"[rgb({r},{g},{b})]{text[i]}[/]");
         }
         AnsiConsole.WriteLine();

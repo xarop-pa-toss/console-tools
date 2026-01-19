@@ -37,7 +37,6 @@ public partial class Modulos
             "Available".PadRight(dispWidth),
             "[/]"
         );
-        AnsiConsole.MarkupLine(headers);
 
         var selected = AnsiConsole.Prompt(
             new MultiSelectionPrompt<string>()
