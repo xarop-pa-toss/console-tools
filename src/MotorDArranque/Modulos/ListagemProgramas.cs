@@ -47,8 +47,8 @@ public partial class Modulos
                         p.VersionString.PadRight(instWidth),
                         p.AvailableVersionString.PadRight(dispWidth),
                         (p.Version < p.AvailableVersion
-                            ? new Markup("[yellow]:check_mark:[/]")
-                            : new Markup("[green]:check_mark:[/]"))
+                            ? new Markup("[yellow]:check_mark:[/]").ToString()
+                            : new Markup("[green]:check_mark:[/]").ToString())
                 ))
         ));
         
