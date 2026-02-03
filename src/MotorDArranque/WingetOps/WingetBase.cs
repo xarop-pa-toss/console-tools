@@ -80,7 +80,7 @@ namespace MotorDArranque.WingetOps
 
         private static async Task<List<ProgramInfo>> GetProgramasInstaladosAsync()
         {
-            var resultado = await Utils.CorrerProcessoAsync(
+            var resultado = await ConsoleUtils.CorrerProcessoAsync(
                 "winget",
                 $"export --include-versions --output \"{jsonFullPath}\""
             );
@@ -91,12 +91,12 @@ namespace MotorDArranque.WingetOps
                                                 $"\nTem permissões de escrita na pasta [link]{Path.GetDirectoryName(jsonFullPath)}[/]?");
             }
 
-            return Utils.ParseExportJsonParaListaProgramas(jsonFullPath);
+            return ConsoleUtils.ParseExportJsonParaListaProgramas(jsonFullPath);
         }
 
         private static async Task GetVersoesDisponiveisAsync(ProgramInfo prog)
         {
-            var resultadoProcesso = await Utils.CorrerProcessoAsync(
+            var resultadoProcesso = await ConsoleUtils.CorrerProcessoAsync(
                 "winget",
                 $"show --id {prog.Id}",
                 true
@@ -141,7 +141,7 @@ namespace MotorDArranque.WingetOps
         [Obsolete]
         private static async Task<List<ProgramInfo>> GetListaProgramasWingetCompletaAsync()
         {
-            var resultadoProcesso = await Utils.CorrerProcessoAsync(
+            var resultadoProcesso = await ConsoleUtils.CorrerProcessoAsync(
                 "winget",
                 "upgrade --include-unknown --source winget",
                 true

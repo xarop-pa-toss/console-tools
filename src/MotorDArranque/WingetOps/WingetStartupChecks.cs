@@ -34,7 +34,7 @@ public class WingetStartup
             if (AnsiConsole.Confirm("Instalar?"))
             {
                 InstalarWingetComPowershell();
-                Utils.ReiniciarPrograma(3000);
+                ConsoleUtils.ReiniciarPrograma(3000);
             }
         }
         
@@ -105,6 +105,6 @@ public class WingetStartup
         }
 
         AnsiConsole.MarkupLine("[underline turquoise2]WinGet instalado com sucesso.[/]");
-        Utils.ReiniciarPrograma(200);
+        ConsoleUtils.ReiniciarPrograma(200);
     }
 }

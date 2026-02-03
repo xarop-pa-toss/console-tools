@@ -15,6 +15,6 @@ public readonly struct Resultado
         Erro = erro;
     }
 
-    public static Resultado Ok() => new(true, null);
+    public static Resultado Ok() => new(true, String.Empty);
     public static Resultado Falha(string erro) => new(false, erro ?? "Sem erro explícito.");
 }

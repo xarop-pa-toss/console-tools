@@ -4,7 +4,7 @@ namespace ConsoleTools.Utils;
 
 public static class Mensagens
 {
-    public static void ErroPanel(string mensagem)
+    public static void ErroPanel(string? mensagem)
     {
         var panel = new Panel(new Markup($"[red]{mensagem}[/]"))
         {
@@ -16,12 +16,12 @@ public static class Mensagens
         AnsiConsole.Write(panel);
     }
 
-    public static Markup ErroMarkup(string mensagem)
+    public static Markup ErroMarkup(string? mensagem)
     {
         return (new Markup($"[red bold] :cross_mark:  Erro: [/][red]{mensagem}[/]"));
     }
 
-    public static void AvisoPanel(string mensagem)
+    public static void AvisoPanel(string? mensagem)
     {
         var panel = new Panel(new Markup($"[yellow]{mensagem}[/]"))
         {
@@ -33,8 +33,9 @@ public static class Mensagens
         AnsiConsole.Write(panel);
     }
 
-    public static Markup AvisoMarkup(string mensagem)
+    public static Markup AvisoMarkup(string? mensagem)
     {
+
         return (new Markup($"[yellow bold] :warning:  Aviso: [/][yellow]{mensagem}[/]"));
     }
 }

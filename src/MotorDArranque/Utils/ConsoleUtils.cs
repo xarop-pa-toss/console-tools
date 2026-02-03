@@ -8,7 +8,7 @@ using Spectre.Console;
 
 namespace ConsoleTools.Utils;
 
-public static class Utils
+public static class ConsoleUtils
 {
     public static void WriteGradient(string text, Color start, Color end)
     {
@@ -24,12 +24,18 @@ public static class Utils
         AnsiConsole.WriteLine();
     }
 
-    public class ProcessoResultado
+    public static void ImprimeLogo()
     {
-        public int CodigoErro { get; set; }
-        public string DescErro { get; set; } = string.Empty;
-        public string StdOut { get; set; } = string.Empty;
-        public string StdErr { get; set; } = string.Empty;
+        WriteGradient(Assets.InfoLogo3, Color.Purple, Color.Aqua);
+
+        var panelTitulo = new Panel(
+            new Markup(
+                "[Invert Aqua]   MOTOR D'ARRANQUE   [/]\n\n" +
+                "Ferramenta de instalação de software com Winget").Centered()
+            ).BorderColor(Color.Purple)
+            .HeaderAlignment(Justify.Center)
+            .RoundedBorder();
+        AnsiConsole.Write(Align.Left(panelTitulo));
     }
 
     public static async Task<ProcessoResultado> CorrerProcessoAsync(

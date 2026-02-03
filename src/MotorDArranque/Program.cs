@@ -6,6 +6,7 @@ using MotorDArranque;
 using Spectre.Console;
 using WGetNET;
 using ConsoleTools.Utils;
+using MotorDArranque.Modulos;
 
 // DI SETUP
 var services = new ServiceCollection();
@@ -19,7 +20,8 @@ services.AddSingleton<WinGet>();
 services.AddSingleton<WinGetPackageManager>();
 services.AddSingleton<WingetStartup>();
 services.AddSingleton<Modulos>();
-services.AddSingleton<Menu>();
+services.AddSingleton<MainMenu>();
+services.AddSingleton<MenuHandler>();
 
 var provider = services.BuildServiceProvider();
 var modulos = provider.GetRequiredService<Modulos>();
@@ -32,7 +34,6 @@ checks.RunStartupVerif();
 // CRIA PASTAS
 Directory.CreateDirectory(AppPaths.AppDirInUserTemp);
 
-
 //Menu loop
 // ├─ try
 // │   └─ Menu.RunAsync
@@ -43,7 +44,7 @@ Directory.CreateDirectory(AppPaths.AppDirInUserTemp);
 
 // TODO: Criar UserFriendlyException
 
-var menu = provider.GetRequiredService<Menu>();
+var menu = provider.GetRequiredService<MainMenu>();
 while (true)
 {
     try

@@ -1,4 +1,5 @@
 using MotorDArranque.Modelos;
+using MotorDArranque.Modulos;
 using Spectre.Console;
 using WGetNET;
 
@@ -6,7 +7,7 @@ namespace ConsoleTools.Modulos;
 
 public partial class Modulos
 {
-    public async Task<Resultado> ListagemProgramas()
+    public async Task<Resultado> ProcurarProgramas()
     {
         var listaProgramas = await _packMgr.GetInstalledPackagesAsync();
         var listaProgWinget = listaProgramas
@@ -51,8 +52,23 @@ public partial class Modulos
                 ))
         ));
         
-        _mh.Handle(await ProgOpsMenu(progList));
+        AnsiConsole.MarkupLine("[bold turquoise2]Programas seleccionados: [/]");
+        foreach (var s in progList)
+        {
+            AnsiConsole.WriteLine(s);
+        }
+        AnsiConsole.WriteLine();
 
+        var operacao = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+            .HighlightStyle(Color.Violet)
+            .AddChoices(
+                "Actualizar",
+                "Desinstalar",
+                "Voltar para a lista")
+        );
+
+        // No internal logic implemented here (stub). Caller should handle operations.
         return Resultado.Ok();
     }
 }

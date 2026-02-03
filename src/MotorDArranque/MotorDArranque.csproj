@@ -23,4 +23,8 @@
     <PackageReference Include="WGet.NET" Version="4.4.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Menus\" />
+  </ItemGroup>
+
 </Project>

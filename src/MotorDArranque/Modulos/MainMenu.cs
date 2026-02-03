@@ -9,15 +9,13 @@ using System.Text;
 using System.Threading.Tasks;
 using WGetNET;
 
-namespace MotorDArranque;
+namespace ConsoleTools.Modulos;
 
-public sealed class Menu(Modulos modulos)
+public partial class Modulos
 {
-    private readonly Modulos _modulos = modulos;
-
     public async Task RunAsync()
     {
-        ImprimeLogo();
+        ConsoleUtils.ImprimeLogo();
         AnsiConsole.Write(Align.Left(new Markup("[Bold Underline Turquoise2]Operações[/]")));
 
         var mainMenu = AnsiConsole.Prompt(
@@ -34,10 +32,11 @@ public sealed class Menu(Modulos modulos)
         switch (mainMenu)
         {
             case "Lista de programas instalados":
-                MenuHandler(await _modulos.ListagemProgramas());
+                _mh.Handle(await ListagemProgramas());
                 break;
-            case "Desinstalar":
-                // await modulos.EcraDesinstalar;
+            case "Instalar programa":
+                _mh.Handle(await ProcurarProgramas());
+                _mh.Handle(await InstalarProgramas());
                 break;
             case "Sair":
                 Environment.Exit(0);
@@ -46,29 +45,5 @@ public sealed class Menu(Modulos modulos)
                 AnsiConsole.WriteLine("nothing");
                 break;
         }
-    }
-
-    private void MenuHandler(Resultado resultado)
-    {
-        if (!resultado.IsSucesso)
-        {
-            AnsiConsole.WriteLine();
-            AnsiConsole.WriteLine();
-            Mensagens.ErroPanel(resultado.Erro);
-        }
-    }
-
-    private void ImprimeLogo()
-    {
-        Utils.WriteGradient(Assets.InfoLogo3, Color.Purple, Color.Aqua);
-
-        var panelTitulo = new Panel(
-            new Markup(
-                "[Invert Aqua]   MOTOR D'ARRANQUE   [/]\n\n" +
-                "Ferramenta de instalação de software com Winget").Centered()
-            ).BorderColor(Color.Purple)
-            .HeaderAlignment(Justify.Center)
-            .RoundedBorder();
-        AnsiConsole.Write(Align.Left(panelTitulo));
     }
 }
