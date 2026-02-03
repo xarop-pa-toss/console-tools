@@ -1,10 +1,12 @@
 ﻿using ConsoleTools;
 using ConsoleTools.Modulos;
 using ConsoleTools.Utils;
+using MotorDArranque.Modelos;
 using Spectre.Console;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using WGetNET;
 
 namespace MotorDArranque;
@@ -13,7 +15,7 @@ public sealed class Menu(Modulos modulos)
 {
     private readonly Modulos _modulos = modulos;
 
-    public async Task RunMenuAsync()
+    public async Task RunAsync()
     {
         ImprimeLogo();
         AnsiConsole.Write(Align.Left(new Markup("[Bold Underline Turquoise2]Operações[/]")));
@@ -23,8 +25,6 @@ public sealed class Menu(Modulos modulos)
             .WrapAround()
             .AddChoices([
                 "Lista de programas instalados",
-                "Instalar Winget",
-                "Desinstalar",
                 "Pacotes de Programas",
                 "Sobre",
                 "Sair"])
@@ -34,7 +34,7 @@ public sealed class Menu(Modulos modulos)
         switch (mainMenu)
         {
             case "Lista de programas instalados":
-                await _modulos.ListagemProgramas();
+                MenuHandler(await _modulos.ListagemProgramas());
                 break;
             case "Desinstalar":
                 // await modulos.EcraDesinstalar;
@@ -45,6 +45,16 @@ public sealed class Menu(Modulos modulos)
             default:
                 AnsiConsole.WriteLine("nothing");
                 break;
+        }
+    }
+
+    private void MenuHandler(Resultado resultado)
+    {
+        if (!resultado.IsSucesso)
+        {
+            AnsiConsole.WriteLine();
+            AnsiConsole.WriteLine();
+            Mensagens.ErroPanel(resultado.Erro);
         }
     }
 
