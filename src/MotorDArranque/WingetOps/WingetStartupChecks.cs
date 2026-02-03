@@ -5,17 +5,17 @@ using System.Text;
 using WGetNET;
 namespace MotorDArranque;
 
-public class WingetStartupChecks
+public class WingetStartup
 {
     private readonly WinGet _wget;
     private readonly WinGetPackageManager _packMgr;
-    public WingetStartupChecks(WinGet wget, WinGetPackageManager packMgr)
+    public WingetStartup(WinGet wget, WinGetPackageManager packMgr)
     {
         _wget = wget;
         _packMgr = packMgr;
     }
 
-    public void Run()
+    public void RunStartupVerif()
     {
         // [UNRELIABLE]
         //
@@ -31,7 +31,7 @@ public class WingetStartupChecks
         if (!_wget.IsInstalled)
         {
             Mensagens.Erro("WinGet não encontrado no sistema. É necessário instalar para usar o programa.");
-            if (AnsiConsole.Confirm("Instalar? (script powershell)"))
+            if (AnsiConsole.Confirm("Instalar?"))
             {
                 InstalarWingetComPowershell();
                 Utils.ReiniciarPrograma(3000);
@@ -57,11 +57,13 @@ public class WingetStartupChecks
         var prcInfo = new ProcessStartInfo
         {
             FileName = "powershell",
-            Arguments = "-NoProfile -ExecutionPolicy Bypass -Command \"Write-Host 'Downloading WinGet...'; Invoke-WebRequest https://aka.ms/getwinget -OutFile winget.msixbundle -Verbose; Write-Host 'Installing WinGet...'; Add-AppxPackage winget.msixbundle -Verbose\"",
+            Arguments = "-NoProfile -ExecutionPolicy Bypass -Command \"Write-Host 'Downloading WinGet...';" +
+                        " Invoke-WebRequest https://aka.ms/getwinget -OutFile winget.msixbundle -Verbose;" +
+                        " Write-Host 'Installing WinGet...'; Add-AppxPackage winget.msixbundle -Verbose\"",
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
-            CreateNoWindow = true
+            CreateNoWindow = false
         };
 
         var process = new Process { StartInfo = prcInfo };

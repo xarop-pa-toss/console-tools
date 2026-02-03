@@ -37,7 +37,7 @@ namespace MotorDArranque.WingetOps
             }
             AnsiConsole.Markup($"[violet]:check_mark:Encontrados {listaProgramas.Count} programas.[/]");
             
-            // Get names and available update versions for previously found programs 
+            // Get names and available update versions for previously found programs
             await AnsiConsole.Progress()
                 .AutoClear(false)
                 .StartAsync(async ctx =>
