@@ -30,7 +30,7 @@ public class WingetStartup
         
         if (!_wget.IsInstalled)
         {
-            Mensagens.Erro("WinGet não encontrado no sistema. É necessário instalar para usar o programa.");
+            Mensagens.ErroPanel("WinGet não encontrado no sistema. É necessário instalar para usar o programa.");
             if (AnsiConsole.Confirm("Instalar?"))
             {
                 InstalarWingetComPowershell();
@@ -43,7 +43,7 @@ public class WingetStartup
         
         if (wingetPackage.AvailableVersion > wingetPackage.Version)
         {
-            Mensagens.Aviso($"O WinGet está na versão [bold]{wingetPackage.VersionString}[/] mas está disponível a versão [bold]{wingetPackage.AvailableVersionString}[/]");
+            Mensagens.AvisoPanel($"O WinGet está na versão [bold]{wingetPackage.VersionString}[/] mas está disponível a versão [bold]{wingetPackage.AvailableVersionString}[/]");
 
             if (AnsiConsole.Confirm("Actualizar WinGet?"))
             {
@@ -100,7 +100,7 @@ public class WingetStartup
         AnsiConsole.WriteLine("");
         if (process.ExitCode != 0)
         {
-            Mensagens.Aviso("Ocorreram erros no script PS de instalação do Winget.\nÉ possível que não tenha sido correctamente instalado.");
+            Mensagens.AvisoPanel("Ocorreram erros no script PS de instalação do Winget.\nÉ possível que não tenha sido correctamente instalado.");
             return;
         }
 

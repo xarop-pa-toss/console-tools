@@ -1,3 +1,4 @@
+using MotorDArranque.Modelos;
 using Spectre.Console;
 using WGetNET;
 
@@ -5,7 +6,7 @@ namespace ConsoleTools.Modulos;
 
 public partial class Modulos
 {
-    public async Task ListagemProgramas()
+    public async Task<Resultado> ListagemProgramas()
     {
         // var listaProgramas = await WingetBase.GetListaProgramasAsync();
         var listaProgramas = await _packMgr.GetInstalledPackagesAsync();
@@ -21,7 +22,6 @@ public partial class Modulos
         int instWidth = listaProgWinget.Max(p => p.VersionString.Length) + 3;
         int dispWidth = listaProgWinget.Max(p => p.AvailableVersionString.Length);
 
-        // Multiselect prompt
         string headers = string.Concat(
             "[underline turquoise2]",
             new string(' ', 8),
@@ -57,5 +57,8 @@ public partial class Modulos
         {
             AnsiConsole.WriteLine(s);
         }
+
+
+        return Resultado.Ok();
     }
 }

@@ -4,7 +4,7 @@ namespace ConsoleTools.Utils;
 
 public static class Mensagens
 {
-    public static void Erro(string mensagem)
+    public static void ErroPanel(string mensagem)
     {
         var panel = new Panel(new Markup($"[red]{mensagem}[/]"))
         {
@@ -21,7 +21,7 @@ public static class Mensagens
         return (new Markup($"[red bold] :cross_mark:  Erro: [/][red]{mensagem}[/]"));
     }
 
-    public static void Aviso(string mensagem)
+    public static void AvisoPanel(string mensagem)
     {
         var panel = new Panel(new Markup($"[yellow]{mensagem}[/]"))
         {
