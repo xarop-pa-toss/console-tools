@@ -7,6 +7,7 @@ namespace MotorDArranque
     internal static class AppPaths
     {
         public static readonly string AppDirInUserTemp = Path.Combine(Path.GetTempPath(), "MotorDArranque");
+        public static readonly string LogPath = Path.Combine(Path.GetTempPath(), "MotorDArranque");
         public static readonly string InstallRoot = String.Empty;
     }
 }
