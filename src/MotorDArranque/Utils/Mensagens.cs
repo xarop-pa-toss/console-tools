@@ -15,7 +15,12 @@ public static class Mensagens
 
         AnsiConsole.Write(panel);
     }
-    
+
+    public static Markup ErroMarkup(string mensagem)
+    {
+        return (new Markup($"[red bold] :cross_mark:  Erro: [/][red]{mensagem}[/]"));
+    }
+
     public static void Aviso(string mensagem)
     {
         var panel = new Panel(new Markup($"[yellow]{mensagem}[/]"))
@@ -26,5 +31,10 @@ public static class Mensagens
         };
 
         AnsiConsole.Write(panel);
+    }
+
+    public static Markup AvisoMarkup(string mensagem)
+    {
+        return (new Markup($"[yellow bold] :warning:  Aviso: [/][yellow]{mensagem}[/]"));
     }
 }
