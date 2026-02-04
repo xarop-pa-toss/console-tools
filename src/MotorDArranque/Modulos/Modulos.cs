@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Logging;
-using MotorDArranque.Modulos;
 using WGetNET;
 
 namespace ConsoleTools.Modulos;

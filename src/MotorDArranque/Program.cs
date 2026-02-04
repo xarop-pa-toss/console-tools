@@ -6,7 +6,7 @@ using MotorDArranque;
 using Spectre.Console;
 using WGetNET;
 using ConsoleTools.Utils;
-using MotorDArranque.Modulos;
+
 
 // DI SETUP
 var services = new ServiceCollection();
@@ -20,7 +20,6 @@ services.AddSingleton<WinGet>();
 services.AddSingleton<WinGetPackageManager>();
 services.AddSingleton<WingetStartup>();
 services.AddSingleton<Modulos>();
-services.AddSingleton<MainMenu>();
 services.AddSingleton<MenuHandler>();
 
 var provider = services.BuildServiceProvider();
@@ -44,13 +43,12 @@ Directory.CreateDirectory(AppPaths.AppDirInUserTemp);
 
 // TODO: Criar UserFriendlyException
 
-var menu = provider.GetRequiredService<MainMenu>();
 while (true)
 {
     try
     {
         AnsiConsole.Clear();
-        await menu.RunAsync();
+        await modulos.MainMenuAsync();
     }
     catch(Exception ex)
     {

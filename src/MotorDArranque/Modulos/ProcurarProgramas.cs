@@ -1,5 +1,4 @@
 using MotorDArranque.Modelos;
-using MotorDArranque.Modulos;
 using Spectre.Console;
 using WGetNET;
 
@@ -7,7 +6,7 @@ namespace ConsoleTools.Modulos;
 
 public partial class Modulos
 {
-    public async Task<Resultado> ProcurarProgramas()
+    public async Task<Resultado> ProcurarProgramasAsync()
     {
         var listaProgramas = await _packMgr.GetInstalledPackagesAsync();
         var listaProgWinget = listaProgramas

@@ -1,19 +1,11 @@
-﻿using ConsoleTools;
-using ConsoleTools.Modulos;
-using ConsoleTools.Utils;
-using MotorDArranque.Modelos;
+﻿using ConsoleTools.Utils;
 using Spectre.Console;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using WGetNET;
 
 namespace ConsoleTools.Modulos;
 
 public partial class Modulos
 {
-    public async Task RunAsync()
+    public async Task MainMenuAsync()
     {
         ConsoleUtils.ImprimeLogo();
         AnsiConsole.Write(Align.Left(new Markup("[Bold Underline Turquoise2]Operações[/]")));
@@ -36,7 +28,7 @@ public partial class Modulos
                 break;
             case "Instalar programa":
                 _mh.Handle(await ProcurarProgramas());
-                _mh.Handle(await InstalarProgramas());
+                //_mh.Handle(await InstalarProgramas());
                 break;
             case "Sair":
                 Environment.Exit(0);
