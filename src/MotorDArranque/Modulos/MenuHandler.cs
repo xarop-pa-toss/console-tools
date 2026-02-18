@@ -10,23 +10,17 @@ public class MenuHandler(ILogger<MenuHandler> logger)
 {
     private readonly ILogger<MenuHandler> _logger = logger;
 
-    public void Handle(Resultado resultado, bool imprimir = true, bool limparEcra = false)
+    public void Handle(Resultado resultado, bool silent = false, bool limparEcra = false)
     {
         AnsiConsole.WriteLine();
-        AnsiConsole.WriteLine();
-        
-        _logger.LogInformation(resultado.Info);
-        Mensagens.ErroPanel(resultado.Info);
-        _logger.LogWarning(resultado.Aviso);
-        Mensagens.ErroPanel(resultado.Aviso);
-        _logger.LogError(resultado.Erro);
-        Mensagens.ErroPanel(resultado.Erro);
-        
+        _logger.MyLogInfo(resultado.Info, tambemConsola: !silent);
+        _logger.MyLogInfo(resultado.Aviso, tambemConsola: !silent);
+        _logger.MyLogInfo(resultado.Erro, tambemConsola: !silent);
         AnsiConsole.WriteLine();
         
         if (limparEcra)
         {
-            AnsiConsole.Markup("[bold]Enter[/] para voltar para o menu anterior.");
+            AnsiConsole.Markup("[bold]Enter[/] para continuar...");
             Console.Read();
             AnsiConsole.Clear();
         }
