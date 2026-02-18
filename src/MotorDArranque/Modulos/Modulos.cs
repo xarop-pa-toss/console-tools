@@ -7,6 +7,6 @@ public partial class Modulos(WinGet wget, WinGetPackageManager packMgr, MenuHand
 {
     private readonly WinGet _wget = wget;
     private readonly WinGetPackageManager _packMgr = packMgr;
-    private readonly MenuHandler _mh = menuHandler;
+    private readonly MenuHandler _menuHandler = menuHandler;
     private readonly ILogger<Modulos> _logger = logger;
 }

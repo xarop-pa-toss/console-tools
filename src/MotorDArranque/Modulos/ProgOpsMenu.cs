@@ -13,9 +13,7 @@ public partial class Modulos
 {
     public async Task<Resultado> ProgOpsMenu(List<string> progList)
     {
-        ConsoleUtils.ImprimeLogo();
-        AnsiConsole.Write(Align.Left(new Markup("[Bold Underline Turquoise2]Operações[/]")));
-
+        
         var menu = AnsiConsole.Prompt(
         new SelectionPrompt<string>()
             .WrapAround()
@@ -32,10 +30,10 @@ public partial class Modulos
         switch (menu)
         {
             case "Actualizar":
-                _mh.Handle(await ListagemProgramas());
+                _menuHandler.Handle(await ListagemProgramas());
                 break;
             case "Desinstalar":
-                _mh.Handle(await ListagemProgramas());
+                _menuHandler.Handle(await ListagemProgramas());
                 break;
             case "Ver informações":
                 // await modulos.EcraDesinstalar;

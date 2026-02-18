@@ -24,10 +24,10 @@ public partial class Modulos
         switch (mainMenu)
         {
             case "Lista de programas instalados":
-                _mh.Handle(await ListagemProgramas());
+                _menuHandler.Handle(await ListagemProgramas());
                 break;
             case "Instalar programa":
-                _mh.Handle(await ProcurarProgramas());
+                // _menuHandler.Handle(await ProcurarProgramas());
                 //_mh.Handle(await InstalarProgramas());
                 break;
             case "Sair":
