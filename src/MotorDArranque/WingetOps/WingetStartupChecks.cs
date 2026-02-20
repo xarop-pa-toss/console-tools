@@ -1,4 +1,5 @@
 using ConsoleTools.Utils;
+using Microsoft.Extensions.Logging;
 using Spectre.Console;
 using System.Diagnostics;
 using System.Text;
@@ -9,10 +10,12 @@ public class WingetStartup
 {
     private readonly WinGet _wget;
     private readonly WinGetPackageManager _packMgr;
-    public WingetStartup(WinGet wget, WinGetPackageManager packMgr)
+    private readonly ILogger<WingetStartup> _logger;
+    public WingetStartup(WinGet wget, WinGetPackageManager packMgr, ILogger<WingetStartup> logger)
     {
         _wget = wget;
         _packMgr = packMgr;
+        _logger = logger;
     }
 
     public void RunStartupVerif()
@@ -30,6 +33,7 @@ public class WingetStartup
         
         if (!_wget.IsInstalled)
         {
+            _logger?.LogWithConsole(LogLevel.Error, "WinGet not installed", printToConsole: true);
             Mensagens.ErroPanel("WinGet não encontrado no sistema. É necessário instalar para usar o programa.");
             if (AnsiConsole.Confirm("Instalar?"))
             {
@@ -43,6 +47,7 @@ public class WingetStartup
         
         if (wingetPackage.AvailableVersion > wingetPackage.Version)
         {
+            _logger?.LogWithConsole(LogLevel.Information, $"WinGet update available: {wingetPackage.VersionString} -> {wingetPackage.AvailableVersionString}", printToConsole: true);
             Mensagens.AvisoPanel($"O WinGet está na versão [bold]{wingetPackage.VersionString}[/] mas está disponível a versão [bold]{wingetPackage.AvailableVersionString}[/]");
 
             if (AnsiConsole.Confirm("Actualizar WinGet?"))

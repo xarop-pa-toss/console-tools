@@ -38,4 +38,21 @@ public static class Mensagens
 
         return (new Markup($"[yellow bold] :warning:  Aviso: [/][yellow]{mensagem}[/]"));
     }
+
+    public static void SucessoPanel(string? mensagem)
+    {
+        var panel = new Panel(new Markup($"[green]{mensagem}[/]"))
+        {
+            Header = new PanelHeader("[green bold] :check_mark:  Sucesso [/"),
+            Border = BoxBorder.Rounded,
+            BorderStyle = new Style(Color.Green3)
+        };
+
+        AnsiConsole.Write(panel);
+    }
+
+    public static Markup SucessoMarkup(string? mensagem)
+    {
+        return (new Markup($"[green bold] :check_mark:  Sucesso: [/][green]{mensagem}[/]"));
+    }
 }

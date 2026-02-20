@@ -14,6 +14,7 @@ var services = new ServiceCollection();
 services.AddLogging(s =>
 {
     s.AddSimpleConsole();
+    s.AddFile(Path.Combine(AppPaths.AppDirInUserTemp, "logs"), "motor-darranque", LogLevel.Information);
     s.SetMinimumLevel(LogLevel.Information);
 });
 services.AddSingleton<WinGet>();
@@ -24,7 +25,10 @@ services.AddSingleton<MenuHandler>();
 
 var provider = services.BuildServiceProvider();
 var modulos = provider.GetRequiredService<Modulos>();
+
+// Registering logger into ConsoleUtils itself
 var logger = provider.GetRequiredService<ILogger<Program>>();
+ConsoleUtils.Logger = provider.GetRequiredService<ILoggerFactory>().CreateLogger("ConsoleUtils");
 
 // VERIFICA ESTADO WINGET 
 var checks = provider.GetRequiredService<WingetStartup>();
