@@ -24,7 +24,7 @@ public partial class Modulos
         switch (mainMenu)
         {
             case "Lista de programas instalados":
-                _mh.Handle(await ListagemProgramas());
+                _menuHandler.Handle(await ListagemProgramas());
                 break;
             case "Pacotes de Programas":
                 _mh.Handle(await ProcurarProgramas());

@@ -1,4 +1,5 @@
-﻿using ConsoleTools.Utils;
+﻿using System.Reflection;
+using ConsoleTools.Utils;
 using Microsoft.Extensions.Logging;
 using MotorDArranque.Modelos;
 using Spectre.Console;
@@ -9,15 +10,19 @@ public class MenuHandler(ILogger<MenuHandler> logger)
 {
     private readonly ILogger<MenuHandler> _logger = logger;
 
-    public void Handle(Resultado resultado)
+    public void Handle(Resultado resultado, bool silent = false, bool limparEcra = false)
     {
-        if (!resultado.IsSucesso)
+        AnsiConsole.WriteLine();
+        _logger.MyLogInfo(resultado.Info, tambemConsola: !silent);
+        _logger.MyLogInfo(resultado.Aviso, tambemConsola: !silent);
+        _logger.MyLogInfo(resultado.Erro, tambemConsola: !silent);
+        AnsiConsole.WriteLine();
+        
+        if (limparEcra)
         {
-            AnsiConsole.WriteLine();
-            AnsiConsole.WriteLine();
-            _logger.LogError(resultado.Erro);
-            Mensagens.ErroPanel(resultado.Erro);
-            AnsiConsole.WriteLine();
+            AnsiConsole.Markup("[bold]Enter[/] para continuar...");
+            Console.Read();
+            AnsiConsole.Clear();
         }
     }
 }

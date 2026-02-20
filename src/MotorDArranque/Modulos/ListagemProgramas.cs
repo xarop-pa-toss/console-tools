@@ -51,7 +51,7 @@ public partial class Modulos
                 ))
         ));
         
-        _mh.Handle(await ProgOpsMenu(progList));
+        _menuHandler.Handle(await ProgOpsMenu(progList));
 
         return Resultado.Ok();
     }
