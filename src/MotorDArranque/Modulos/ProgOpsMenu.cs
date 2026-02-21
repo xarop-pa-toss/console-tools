@@ -1,11 +1,5 @@
-﻿using ConsoleTools;
-using ConsoleTools.Modulos;
-using ConsoleTools.Utils;
-using MotorDArranque.Modelos;
+﻿using MotorDArranque.Modelos;
 using Spectre.Console;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ConsoleTools.Modulos;
 

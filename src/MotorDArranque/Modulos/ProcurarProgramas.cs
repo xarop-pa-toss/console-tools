@@ -1,6 +1,5 @@
 using MotorDArranque.Modelos;
 using Spectre.Console;
-using WGetNET;
 
 namespace ConsoleTools.Modulos;
 
