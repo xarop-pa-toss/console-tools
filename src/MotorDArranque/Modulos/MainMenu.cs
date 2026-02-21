@@ -13,11 +13,11 @@ public partial class Modulos
         var mainMenu = AnsiConsole.Prompt(
         new SelectionPrompt<string>()
             .WrapAround()
-            .AddChoices([
+            .AddChoices(
                 "Lista de programas instalados",
                 "Pacotes de Programas",
                 "Sobre",
-                "Sair"])
+                "Sair")
             .HighlightStyle(new Style(Styles.Base.Background, decoration: Decoration.Bold)));
 
         // RESULTADOS MAIN MENU
@@ -26,9 +26,8 @@ public partial class Modulos
             case "Lista de programas instalados":
                 _menuHandler.Handle(await ListagemProgramas());
                 break;
-            case "Instalar programa":
-                // _menuHandler.Handle(await ProcurarProgramas());
-                //_mh.Handle(await InstalarProgramas());
+            case "Pacotes de Programas":
+                _menuHandler.Handle(await ProcurarProgramas());
                 break;
             case "Sair":
                 Environment.Exit(0);

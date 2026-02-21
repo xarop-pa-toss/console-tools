@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using MotorDArranque.Modelos;
 using MotorDArranque.WingetOps;
 using Spectre.Console;
@@ -10,6 +11,9 @@ namespace ConsoleTools.Utils;
 
 public static class ConsoleUtils
 {
+    // Optional logger wired by DI at startup (Program.cs)
+    public static ILogger? Logger { get; set; }
+
     public static void WriteGradient(string text, Color start, Color end)
     {
         for (int i = 0; i < text.Length; i++)
@@ -54,6 +58,8 @@ public static class ConsoleUtils
         using var process = Process.Start(psi)
                             ?? throw new InvalidOperationException($"Erro ao iniciar processo {nomeExe}.");
 
+        Logger?.LogWithConsole(LogLevel.Debug, $"Starting process {nomeExe} {argumentos} (caller: {caller})", printToConsole: false);
+
         string stdout = string.Empty;
         string stderr = string.Empty;
         if (capturarOutput)
@@ -72,9 +78,13 @@ public static class ConsoleUtils
 
         if (process.ExitCode != 0)
         {
+            Logger?.LogWithConsole(LogLevel.Error, $"Process {psi.FileName} exited with code {process.ExitCode} (caller: {caller}): {descErro} \nStdOut: {stdout} \nStdErr: {stderr}", printToConsole: true);
+
             throw new Exception($"'{caller ?? "Um processo"}' terminou com erro:" +
                                 $"\n{process.ExitCode} - {descErro}");
         }
+
+        Logger?.LogWithConsole(LogLevel.Information, $"Process {psi.FileName} finished successfully (caller: {caller})", printToConsole: true);
 
         return new ProcessoResultado
         {
