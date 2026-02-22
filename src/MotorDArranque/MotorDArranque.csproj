@@ -25,7 +25,12 @@
 
   <ItemGroup>
     <Folder Include="Menus\" />
-    <Folder Include="ModulosBase\" />
+    <Folder Include="Templates\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ConsoleTools.Core\ConsoleTools.Core.csproj" />
+    <ProjectReference Include="..\ConsoleTools.ConsoleUI\ConsoleTools.ConsoleUI.csproj" />
   </ItemGroup>
 
 </Project>

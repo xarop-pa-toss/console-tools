@@ -27,7 +27,7 @@ public partial class Modulos
                 _menuHandler.Handle(await ListagemProgramas());
                 break;
             case "Pacotes de Programas":
-                _menuHandler.Handle(await ProcurarProgramas());
+                _menuHandler.Handle(await ProcurarProgramasAsync());
                 break;
             case "Sair":
                 Environment.Exit(0);
