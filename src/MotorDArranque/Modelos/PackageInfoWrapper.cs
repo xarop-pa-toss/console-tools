@@ -1,4 +1,4 @@
-using ConsoleTools.ConsoleUI;
+using ConsoleTools.SpectreUI;
 
 namespace MotorDArranque.Modelos;
 

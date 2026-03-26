@@ -1,6 +1,6 @@
 using Spectre.Console;
 
-namespace ConsoleTools.ConsoleUI;
+namespace ConsoleTools.SpectreUI;
 
 /// <summary>
 /// Configuration for a column in the multi-column selector

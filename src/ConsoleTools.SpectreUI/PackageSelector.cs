@@ -1,6 +1,6 @@
 using Spectre.Console;
 
-namespace ConsoleTools.ConsoleUI;
+namespace ConsoleTools.SpectreUI;
 
 /// <summary>
 /// Interface for package info to allow selector to work with any package type

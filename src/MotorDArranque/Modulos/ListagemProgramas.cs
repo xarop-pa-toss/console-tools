@@ -1,5 +1,5 @@
 using MotorDArranque.Modelos;
-using ConsoleTools.ConsoleUI;
+using ConsoleTools.SpectreUI;
 
 
 namespace ConsoleTools.Modulos;

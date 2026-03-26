@@ -30,8 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ConsoleTools.Framework\ConsoleTools.Framework.csproj" />
-    <ProjectReference Include="..\ConsoleTools.Core\ConsoleTools.Core.csproj" />
-    <ProjectReference Include="..\ConsoleTools.ConsoleUI\ConsoleTools.ConsoleUI.csproj" />
+    <ProjectReference Include="..\ConsoleTools.SpectreUI\ConsoleTools.SpectreUI.csproj" />
   </ItemGroup>
 
 </Project>
