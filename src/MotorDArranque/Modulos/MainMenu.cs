@@ -1,26 +1,26 @@
-﻿using ConsoleTools.Utils;
+using ConsoleTools.Framework;
+using ConsoleTools.Utils;
 using Spectre.Console;
 
 namespace ConsoleTools.Modulos;
 
 public partial class Modulos
 {
-    public async Task MainMenuAsync()
+    public async Task<bool> MainMenuAsync()
     {
         ConsoleUtils.ImprimeLogo();
         AnsiConsole.Write(Align.Left(new Markup("[Bold Underline Turquoise2]Operações[/]")));
 
         var mainMenu = AnsiConsole.Prompt(
-        new SelectionPrompt<string>()
-            .WrapAround()
-            .AddChoices(
-                "Lista de programas instalados",
-                "Pacotes de Programas",
-                "Sobre",
-                "Sair")
-            .HighlightStyle(new Style(Styles.Base.Background, decoration: Decoration.Bold)));
+            new SelectionPrompt<string>()
+                .WrapAround()
+                .AddChoices(
+                    "Lista de programas instalados",
+                    "Pacotes de Programas",
+                    "Sobre",
+                    "Voltar ao ConsoleTools")
+                .HighlightStyle(ConsoleToolsStyles.PromptHighlight));
 
-        // RESULTADOS MAIN MENU
         switch (mainMenu)
         {
             case "Lista de programas instalados":
@@ -29,12 +29,15 @@ public partial class Modulos
             case "Pacotes de Programas":
                 _menuHandler.Handle(await ProcurarProgramasAsync());
                 break;
-            case "Sair":
-                Environment.Exit(0);
+            case "Sobre":
+                AnsiConsole.MarkupLine("[grey]Motor D'Arranque - winget wrapper[/]");
                 break;
+            case "Voltar ao ConsoleTools":
+                return false;
             default:
-                AnsiConsole.WriteLine("nothing");
                 break;
         }
+
+        return true;
     }
 }

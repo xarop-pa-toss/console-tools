@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>MotorDArranque</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ConsoleTools.Framework\ConsoleTools.Framework.csproj" />
     <ProjectReference Include="..\ConsoleTools.Core\ConsoleTools.Core.csproj" />
     <ProjectReference Include="..\ConsoleTools.ConsoleUI\ConsoleTools.ConsoleUI.csproj" />
   </ItemGroup>
